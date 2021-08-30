@@ -2,35 +2,66 @@ import React, {useState, useEffect} from 'react';
 import { Row, Col, Button, Card, Input, Form } from 'antd';
 import ScheduleSelector from 'react-schedule-selector';
 import axios from "axios";
+import { Header } from 'antd/lib/layout/layout';
 
 
 const style = { background: '#0092ff', padding: '8px 0' };
 // GET de array u obj, buscar fecha y obtener personas anotadas
-const example_get = [
+/*const example_get = [
     {
-        'date': Date.parse(new Date("2021-08-30T05:00:00.000Z")),
+        'date': "2021-08-30 1:00:00",
         'nombres': ['tesurot'],
         'espacios': 1
     }
-];
+]; */
+
+
+
+
+//let  useEffect();
+
+// console.log(example_get)
+
+
+
+let example_get = []
+
+let url = "http://localhost:5000/week" //"https://sala-tutorxs.herokuapp.com/week";
+    axios
+        .get(url, {}, {headers: {"Access-Control-Allow-Origin": "*"}})
+                                    
+        .then((response) => {
+
+        example_get = response["data"];
+
+        })
+        .catch((err) => {
+        console.log(err);
+        if (err.response) {
+        } else {
+        }
+
+        });
+
 
 export default function HorariosSala() {
 
     const [schedule, setSchedule] = useState({});
     const [nombre, setNombre] = useState('Tesurot');
     const [selected, setSelected] = useState('');
-    //const [form] = Form.useForm();
+    // const [form] = Form.useForm();
 
-
+    
     const handleChange = (newSchedule) => {
         setSchedule({ schedule: newSchedule });
     }
 
     const check_espacios = (time) => {
-        console.log(example_get[0]['date']);
-        console.log(time);
+        //console.log(example_get[0]['date']);
+        //console.log(time);
+        // console.log(example_get)
         for(let i in example_get){
-            if(example_get[i]['date'] === Date.parse(time)){
+            if(Date.parse(new Date(example_get[i]['date'])) === Date.parse(time)){
                 return `(${example_get[i]['espacios']}/4)`;
             }
         }
@@ -40,7 +71,7 @@ export default function HorariosSala() {
     const formatTutores = (time) => {
         let lista = [];
         for(let i in example_get){
-            if(example_get[i]['date'] === Date.parse(time)){
+            if(Date.parse(new Date(example_get[i]['date'])) === Date.parse(time)){
                 lista = example_get[i]['nombres'];
             }
         }
