@@ -3,6 +3,10 @@ import { Row, Col, Button, Card, Input, Form } from 'antd';
 import ScheduleSelector from 'react-schedule-selector';
 import axios from "axios";
 import { Header } from 'antd/lib/layout/layout';
+import { GoogleLogin, GoogleLogout } from 'react-google-login';
+
+
+
 
 
 const style = { background: '#0092ff', padding: '8px 0' };
@@ -49,7 +53,45 @@ export default function HorariosSala() {
     const [schedule, setSchedule] = useState({});
     const [nombre, setNombre] = useState('Tesurot');
     const [selected, setSelected] = useState('');
+    const [email, setEmail] = useState('');
+    const [name, setName] = useState('')
+    const [tutore, setTutore] = useState({"email": "",
+                                        "nombre": "",
+                                        "gds": "",
+                                        "apodo": "",
+                                        "pronombre": "",
+                                        "tiene_llave": false,
+                                        "gda": "",
+                                        "rol": []
+                                        })
     // const [form] = Form.useForm();
+
+    const responseGoogle = (response) => {
+        // console.log(response);
+        if (response) {
+        setEmail(response["Ws"]["Ht"])
+        setName(response["Ws"]["Qe"])
+        let url = "http://localhost:5000/tutore?email=" + response["Ws"]["Ht"] //"https://sala-tutorxs.herokuapp.com/week";
+        axios
+        .get(url, {}, { headers: {"Access-Control-Allow-Origin": "*"}})                         
+        .then((response) => {
+            setTutore(response["data"])
+        })
+        .catch((err) => {
+        console.log(err);
+        if (err.response) {
+        } else {
+        }
+        });
+        
+        } else {
+            setEmail("")
+            setName("")
+            setTutore({"email": "", "nombre": "", "pronombre": "",
+                    "apodo": "", "gds": "", "tiene_llave": false,
+                    "rol": [], "gda": "" })
+        }
+      }
 
     
     const handleChange = (newSchedule) => {
@@ -131,6 +173,28 @@ export default function HorariosSala() {
         
     }
 
+    const GoogleSign = () => {
+
+        if (!tutore || !tutore["email"]) {
+            return <GoogleLogin
+            clientId="808906601781-26v2s8buno09vr8u6ftnvfonv598o5ft.apps.googleusercontent.com"
+            buttonText="Login"
+            onSuccess={responseGoogle}
+            onFailure={responseGoogle}
+            cookiePolicy={'single_host_origin'}
+            isSignedIn={true}
+            />
+            } else {
+    
+            return <GoogleLogout
+            clientId="808906601781-26v2s8buno09vr8u6ftnvfonv598o5ft.apps.googleusercontent.com"
+            buttonText="Logout"
+            onLogoutSuccess={responseGoogle}
+            >
+            </GoogleLogout>
+            }
+    }
+
     return (
         <div>
         <h1>Salita Tutores 🥰</h1>
@@ -198,6 +262,14 @@ export default function HorariosSala() {
                 </Col>
             {/* </Form> */}
         </Card>
+        
+        <h1>{email}</h1>
+        <h1>{name}</h1>
+        <h1>{tutore["apodo"]}</h1>
+
+        {GoogleSign()}
+
         </div>
+        
     )
 }
