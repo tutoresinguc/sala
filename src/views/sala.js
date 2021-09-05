@@ -9,6 +9,8 @@ import Logo from '../logo.gif';
 
 
 
+let api = "https://sala-tutorxs.herokuapp.com"
+// api = "localhost:5000"
 
 
 const style = { background: '#0092ff', padding: '8px 0' };
@@ -35,7 +37,7 @@ let cupos = 0
 let cupos0 = '(0/4)'
 let valor = 0;
 
-let url = "http://localhost:5000/week" //"https://sala-tutorxs.herokuapp.com/week";
+let url = `${api}/week` //"https://sala-tutorxs.herokuapp.com/week";
 function loadSchedule () {    axios
         .get(url, {}, {headers: {"Access-Control-Allow-Origin": "*"}})
                                     
@@ -136,7 +138,7 @@ export default function HorariosSala() {
         setName(response["Ws"]["Qe"])
         setGoogleImage(response["Ws"]["wJ"])
         
-        let url = "http://localhost:5000/tutore?email=" + response["Ws"]["Ht"] //"https://sala-tutorxs.herokuapp.com/week";
+        let url = `${api}/tutore?email=` + response["Ws"]["Ht"] //"https://sala-tutorxs.herokuapp.com/week";
         axios
         .get(url, {}, { headers: {"Access-Control-Allow-Origin": "*"}})                         
         .then((response) => {
@@ -345,7 +347,7 @@ export default function HorariosSala() {
     const sendSchedule = () => {
         // const obj = {schedule: schedule, nombre: nombre}
         // console.log("AAA", schedule)
-        axios.post('http://localhost:5000/horarios/reservar', {'tutore': tutore, 'schedule': schedule }, {'tutore': tutore, 'schedule': schedule})
+        axios.post(`${api}/horarios/reservar`, {'tutore': tutore, 'schedule': schedule }, {'tutore': tutore, 'schedule': schedule})
         .then( (response) => {
             reloadSchedule();
         })
@@ -354,7 +356,7 @@ export default function HorariosSala() {
     const sendRequest = () => {
         const obj = {schedule: schedule, nombre: nombre}
         
-        axios.put('http://localhost:5000/tutore/change-name', {"nombre": nombre, "tutore": tutore, "schedule": schedule}, {"nombre": nombre, "tutore": tutore, "schedule": schedule})
+        axios.put(`${api}/tutore/change-name`, {"nombre": nombre, "tutore": tutore, "schedule": schedule}, {"nombre": nombre, "tutore": tutore, "schedule": schedule})
         .then( (response) => {
             // console.log(response)
             setNombreNew(response["data"]["name"]);
