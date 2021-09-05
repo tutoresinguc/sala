@@ -14,3 +14,9 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+tutore {
+  border-radius: 0.3rem;
+  border-color: 'transparent';
+  margin: 0.1rem;
+}

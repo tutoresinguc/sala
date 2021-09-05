@@ -2,65 +2,313 @@ import React, {useState, useEffect} from 'react';
 import { Row, Col, Button, Card, Input, Form } from 'antd';
 import ScheduleSelector from 'react-schedule-selector';
 import axios from "axios";
+import { Header } from 'antd/lib/layout/layout';
+import { GoogleLogin, GoogleLogout } from 'react-google-login';
+import  LoadingScreen  from 'react-loading-screen';
+import Logo from '../logo.gif';
+
+
+
 
 
 const style = { background: '#0092ff', padding: '8px 0' };
 // GET de array u obj, buscar fecha y obtener personas anotadas
-const example_get = [
+/*const horarios = [
     {
-        'date': Date.parse(new Date("2021-08-30T05:00:00.000Z")),
+        'date': "2021-08-30 1:00:00",
         'nombres': ['tesurot'],
         'espacios': 1
     }
-];
+]; */
+
+
+
+
+//let  useEffect();
+
+// console.log(horarios)
+
+
+
+let horarios = []
+let cupos = 0
+let cupos0 = '(0/4)'
+let valor = 0;
+
+let url = "http://localhost:5000/week" //"https://sala-tutorxs.herokuapp.com/week";
+function loadSchedule () {    axios
+        .get(url, {}, {headers: {"Access-Control-Allow-Origin": "*"}})
+                                    
+        .then((response) => {
+
+        horarios = response["data"]['schedule'];
+        cupos = response["data"]['cupos'];
+        cupos0 = response["data"]['cupos_0'];
+
+        })
+        .catch((err) => {
+        console.log(err);
+        if (err.response) {
+        } else {
+        }
+
+        });
+
+    };
+
+loadSchedule();
 
 export default function HorariosSala() {
 
     const [schedule, setSchedule] = useState({});
-    const [nombre, setNombre] = useState('Tesurot');
+    const [nombre, setNombre] = useState('');
     const [selected, setSelected] = useState('');
-    //const [form] = Form.useForm();
+    const [email, setEmail] = useState('');
+    const [name, setName] = useState('')
+    const [week, setWeek] = useState(new Date())
+    const [isLoading, setIsLoading] = useState(true)
+    const [googleImage, setGoogleImage] = useState("")
+    const [nombreNew, setNombreNew] = useState('')
+    const [tutore, setTutore] = useState({"email": "",
+                                        "nombre": "",
+                                        "gds": "",
+                                        "apodo": "",
+                                        "pronombre": "",
+                                        "tiene_llave": false,
+                                        "gda": "",
+                                        "rol": []
+                                        })
+    // const [form] = Form.useForm();
 
+    function reloadSchedule () {    axios
+        .get(url, {}, {headers: {"Access-Control-Allow-Origin": "*"}})
+                                    
+        .then((response) => {
+        
+            // console.log(response["data"])
+            // console.log(`aaa ${response["data"]}`)
+            
+        horarios = response["data"]['schedule'];
+        valor = new Date(horarios[0]["date"]);
+        setWeek(valor);
+        cupos = response["data"]['cupos'];
+        cupos0 = response["data"]['cupos_0'];
+        setSchedule({})
 
+        })
+        .catch((err) => {
+        console.log(err);
+        if (err.response) {
+        } else {
+        }
+
+        });
+        
+        // setIsLoading(false)
+        //console.log(`aaa ${week}`)
+        // https://www.sitepoint.com/delay-sleep-pause-wait/
+        function sleep(s) {
+            return new Promise(resolve => setTimeout(resolve, s))
+            let tiempo = new Date() + s;
+            while (new Date() < tiempo) {
+
+            }
+        }
+        sleep(3000)
+        .then( () => {
+                setIsLoading(false)
+
+        }
+         )
+         
+         
+
+    };
+
+    const responseGoogle = (response) => {
+        
+        
+        //console.log(week)
+        // console.log(response);
+        if (response) {
+        console.log(response)
+        setEmail(response["Ws"]["Ht"])
+        setName(response["Ws"]["Qe"])
+        setGoogleImage(response["Ws"]["wJ"])
+        
+        let url = "http://localhost:5000/tutore?email=" + response["Ws"]["Ht"] //"https://sala-tutorxs.herokuapp.com/week";
+        axios
+        .get(url, {}, { headers: {"Access-Control-Allow-Origin": "*"}})                         
+        .then((response) => {
+            setTutore(response["data"])
+            setNombre(response["data"]["apodo"])
+            setNombreNew(response["data"]["apodo"])
+        })
+        .catch((err) => {
+        console.log(err);
+        if (err.response) {
+        } else {
+        }
+        });
+        
+        } else {
+            setEmail("")
+            setName("")
+            setTutore({"email": "", "nombre": "", "pronombre": "",
+                    "apodo": "", "gds": "", "tiene_llave": false,
+                    "rol": [], "gda": "" })
+        }
+
+        //setNombre(tutore["apodo"])
+        //setIsLoading(false);
+        reloadSchedule();
+      }
+
+    
     const handleChange = (newSchedule) => {
+        // console.log(newSchedule)
         setSchedule({ schedule: newSchedule });
     }
 
     const check_espacios = (time) => {
-        console.log(example_get[0]['date']);
-        console.log(time);
-        for(let i in example_get){
-            if(example_get[i]['date'] === Date.parse(time)){
-                return `(${example_get[i]['espacios']}/4)`;
+        for(let i in horarios){
+            if(Date.parse(new Date(horarios[i]['date'])) === Date.parse(time)){
+                
+                return `${horarios[i]['cupos']}`;
+                // return `(${horarios[i]['espacios']}/4)`;
             }
         }
-        return '(0/4)'
+        return cupos0
+    }
+
+    let colorSelected = 'rgba(89, 154, 242, 1)'
+    let colorNotSelected = 'rgba(162, 198, 248, 1)'
+    let colorMouse = '#dbedff'
+
+    const colors = (time) => {
+
+        let verde = true;
+        let not = false;
+        let anotade = false;
+
+        for (let i in horarios) {
+            if (Date.parse(new Date( horarios[i]['date'] )) === Date.parse(time)) {
+                verde = horarios[i]['verde'];
+                not = horarios[i]['not'];
+                //console.log("AAA")
+                if (email) {
+                    // console.log("ES EMAIL", horarios[i]["nombres"])
+
+                    if (horarios[i]['emails'].includes(email)) {
+                        //console.log("ESTÄ EL EMAIL ")
+                        anotade = true;
+                    }
+                }
+
+            }
+        }
+
+          if ( !verde ) {
+
+            colorSelected = 'rgba(142, 68, 173, 1)'
+            colorNotSelected = 'rgba(187, 143, 206, 1)'
+            colorMouse = '#D2B4DE'
+            
+
+        } else
+        if (anotade) {
+            colorSelected = '#EC7063';
+            colorNotSelected = '#52BE80';
+            colorMouse = '#7DCEA0';
+
+        }  else if ( not ) {
+
+            /*colorSelected = 'rgba(231, 76, 60)'
+            colorNotSelected = 'rgba(241, 148, 138)'
+            colorMouse = '#F5B7B1'*/
+            colorSelected = 'rgba(142, 68, 173, 1)'
+            colorNotSelected = 'rgba(187, 143, 206, 1)'
+            colorMouse = '#D2B4DE'
+
+        } else {
+
+            colorSelected = 'rgba(89, 154, 242, 1)'
+            colorNotSelected = 'rgba(162, 198, 248, 1)'
+            colorMouse = '#dbedff'
+
+        }
+
+        return [colorSelected, colorNotSelected, colorMouse]
+    }
+
+    const colorTutorxs = (tutore) => {
+        if (!tutore) {
+            return <span></span>
+        }
+        let rol = tutore['rol'];
+        let color = '#E74C3C'
+        if (rol === 'coordi') {
+            color = '#273746'
+        } else if (rol === 'jefx') {
+            color = 'rgba(46, 134, 193, 1)'
+        }
+        // console.log(tutore)
+        return <span className={"ant-btn-primary tutore"} key={tutore['nombre']} style={{backgroundColor: color, color: 'white', borderRadius: '0.3rem', borderColor: 'transparent', margin: '0.1rem', fontSize: '0.8rem', paddingTop: '0.2rem', paddingBottom: '0.26rem', paddingLeft: '0.3rem', paddingRight: '0.3rem',  verticalAlign: 'center'}}>{tutore['nombre']}</span>
+    
+            
+            //for (let i in lista)
+
+            
+        //)</div>}
     }
 
     const formatTutores = (time) => {
         let lista = [];
-        for(let i in example_get){
-            if(example_get[i]['date'] === Date.parse(time)){
-                lista = example_get[i]['nombres'];
+        for(let i in horarios){
+            if(Date.parse(new Date(horarios[i]['date'])) === Date.parse(time)){
+                lista = horarios[i]['nombres'];
             }
         }
-        let result = '';
+        // let result = '';
+        let listaTutorxs = []
         for (let i in lista){
-            result += lista[i];
+
+            listaTutorxs.push(colorTutorxs(lista[i]))
+
+            // result += `${colorTutorxs(lista[i])}`;
         }
-        return result;
+        // console.log(listaTutorxs)
+
+        return   listaTutorxs 
     }
 
-    const renderCustomDateCell = (time, selected, innerRef) => (
-        <div style={{ textAlign: 'center', backgroundColor: selected ? 'rgba(89, 154, 242, 1)' : 'rgba(162, 198, 248, 1)'}} 
+    const renderCustomDateCell = (time, selected, innerRef) => { 
+        //console.log(innerRef
+        // console.log(selected)
+        
+        let [colorSelected, colorNotSelected, colorMouse] = colors(time)
+
+        /*
+        if (time === Date.parse(new Date("2021-09-05 6:00:00"))) {
+            console.log("HORA AAAAAAAAAAAAAA");
+            console.log(colorSelected)
+        }
+
+        if (time === Date.parse(new Date("2021-09-05 7:00:00"))) {
+            console.log("HORA AAAAAAAAAAAAAA");
+            console.log(colorSelected)
+        } */
+
+        return (
+        <div style={{ textAlign: 'center', backgroundColor: selected ? colorSelected : colorNotSelected}} 
             ref={innerRef} onMouseOver={(c) => {
-                c.target.style.backgroundColor = '#dbedff';
+                c.target.style.backgroundColor = colorMouse;
                 setSelected(formatTutores(time));
             }}
-            onMouseLeave={(c) => {c.target.style.backgroundColor = selected ? 'rgba(89, 154, 242, 1)' : 'rgba(162, 198, 248, 1)'}}>
+            onMouseLeave={(c) => {c.target.style.backgroundColor = selected ? colorSelected : colorNotSelected}}>
             {check_espacios(time)}
         </div>
-    )
+    ) }
 
     // const validateFields = (rule, value, callback) => {
     //     const nombre = form.getFieldValue('nombre')
@@ -94,16 +342,76 @@ export default function HorariosSala() {
     //     return;
     // };
 
+    const sendSchedule = () => {
+        // const obj = {schedule: schedule, nombre: nombre}
+        // console.log("AAA", schedule)
+        axios.post('http://localhost:5000/horarios/reservar', {'tutore': tutore, 'schedule': schedule }, {'tutore': tutore, 'schedule': schedule})
+        .then( (response) => {
+            reloadSchedule();
+        })
+    }
+
     const sendRequest = () => {
         const obj = {schedule: schedule, nombre: nombre}
-        console.log(obj);
+        
+        axios.put('http://localhost:5000/tutore/change-name', {"nombre": nombre, "tutore": tutore, "schedule": schedule}, {"nombre": nombre, "tutore": tutore, "schedule": schedule})
+        .then( (response) => {
+            // console.log(response)
+            setNombreNew(response["data"]["name"]);
+            // console.log(schedule)
+            // setNombreNew(response["data"]["name"])
+            
+        })
+        
+        reloadSchedule();
         
     }
 
+    const GoogleSign = () => {
+
+        if (!tutore || !tutore["email"]) {
+            return <GoogleLogin
+            clientId="808906601781-26v2s8buno09vr8u6ftnvfonv598o5ft.apps.googleusercontent.com"
+            buttonText="Login"
+            onSuccess={responseGoogle}
+            onFailure={responseGoogle}
+            cookiePolicy={'single_host_origin'}
+            isSignedIn={true}
+            />
+            } else {
+            
+            return <GoogleLogout
+            clientId="808906601781-26v2s8buno09vr8u6ftnvfonv598o5ft.apps.googleusercontent.com"
+            buttonText="Logout"
+            onLogoutSuccess={responseGoogle}
+            >
+            </GoogleLogout>
+            }
+    }
+
+    // console.log(horarios)
+
     return (
+
+        <LoadingScreen
+    loading={isLoading}
+    bgColor='#ff5757'
+    //spinnerColor='#9ee5f8'
+    textColor='white'
+    logoSrc={Logo}
+    text='Buscando las llaves de la sala...'
+  > 
+        
         <div>
+            
+    
         <h1>Salita Tutores 🥰</h1>
+
+        
+
+
         <Card style={{ width: 600 }}>
+        
             {/* <Form
               name="basic"
               onFinish={onFinish}
@@ -126,10 +434,10 @@ export default function HorariosSala() {
                         }
                         ]}
                     > */}
-                        <ScheduleSelector timeFormat='h' minTime={1} maxTime={8} 
+                        <ScheduleSelector timeFormat='h' startDate={week}  numDays={5} minTime={1} maxTime={8} 
                                         selection={schedule.schedule} onChange={handleChange}
-                                        renderDateCell={renderCustomDateCell}  dateFormat='D/M'
-                        />
+                                        renderDateCell={renderCustomDateCell}  dateFormat='DD/MM'
+                        /> 
                     {/* </Form.Item> */}
                     {/* <Form.Item
                         name="nombre"
@@ -147,7 +455,40 @@ export default function HorariosSala() {
                         ]}
                     > */}
                     <p style={{marginTop:'2%'}}>Tutores en la casilla: {selected}</p>
-                    <Input placeholder='Nombre Tutor/a' style={{ marginTop: '1%' }} onChange={(d) => setNombre(d.target.value)}/>
+                    {/* </Form.Item> */}
+                    
+                    <Button
+                            type="primary"
+                            size="large"
+                            // htmlType="submit"
+                            style={{
+                                textAlign: "center",
+                                marginTop: "5%",
+                                borderRadius: "10px",
+                                fontSize: "15px",
+                                color: "white"
+                            }}
+                            onClick={reloadSchedule}
+                        >
+                            Recargar
+                    </Button>
+                    
+                    <Button
+                            type="primary"
+                            size="large"
+                            // htmlType="submit"
+                            style={{
+                                textAlign: "center",
+                                marginTop: "5%",
+                                borderRadius: "10px",
+                                fontSize: "15px",
+                                color: "white"
+                            }}
+                            onClick={sendSchedule}
+                        >
+                            Enviar
+                    </Button>
+                    <Input placeholder='Cambiar tu nombre' value={nombre}  style={{ marginTop: '1%' }} onChange={(d) => setNombre(d.target.value)}/>
                     {/* </Form.Item> */}
                     <Button
                             type="primary"
@@ -162,11 +503,24 @@ export default function HorariosSala() {
                             }}
                             onClick={sendRequest}
                         >
-                            Enviar
+                            Cambiar mi nombre
                     </Button>
                 </Col>
             {/* </Form> */}
         </Card>
+        
+        {/*
+        <img src={googleImage}></img>
+        */}
+        <h1>{email}</h1>
+        <h1>{name}</h1>
+        <h1>{nombreNew}</h1>
+
+        {GoogleSign()}
+
+
+ 
         </div>
+        </LoadingScreen>    
     )
 }
