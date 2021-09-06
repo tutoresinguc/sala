@@ -12,8 +12,6 @@ import Logo from '../logo.gif';
 
 let api = "https://sala-tutorxs.herokuapp.com"
 const googleKey = process.env.REACT_APP_GOOGLE;
-console.log(googleKey);
-console.log(process.env)
 // api = "localhost:5000"
 
 
@@ -136,8 +134,9 @@ export default function HorariosSala() {
         
         //console.log(week)
         // console.log(response);
-        if (response) {
-        console.log(response)
+        console.log("AAA", response)
+        if (response.includes("Ws")) {
+        console.log(response, response.includes("Ws"))
         setEmail(response["Ws"]["Ht"])
         setName(response["Ws"]["Qe"])
         setGoogleImage(response["Ws"]["wJ"])
