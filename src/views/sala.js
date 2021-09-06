@@ -1,5 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import { Row, Col, Button, Card, Input, Form } from 'antd';
+import { HeartFilled } from '@ant-design/icons';
 import ScheduleSelector from 'react-schedule-selector';
 import axios from "axios";
 import { Header } from 'antd/lib/layout/layout';
@@ -521,7 +522,9 @@ export default function HorariosSala() {
         {GoogleSign()}
 
 
- 
+        <p style={{textAlign: "center"}}>
+          Made with {<HeartFilled />} by PFGang
+        </p>
         </div>
         </LoadingScreen>    
     )
