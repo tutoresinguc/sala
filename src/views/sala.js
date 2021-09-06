@@ -11,7 +11,9 @@ import Logo from '../logo.gif';
 
 
 let api = "https://sala-tutorxs.herokuapp.com"
-const googleKey = process.env.GOOGLE_API;
+const googleKey = process.env.REACT_APP_GOOGLE;
+console.log(googleKey);
+console.log(process.env)
 // api = "localhost:5000"
 
 
