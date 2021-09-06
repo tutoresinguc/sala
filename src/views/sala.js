@@ -403,14 +403,14 @@ export default function HorariosSala() {
 
     return (
 
-//         <LoadingScreen
-//     loading={isLoading}
-//     bgColor='#ff5757'
-//     //spinnerColor='#9ee5f8'
-//     textColor='white'
-//     logoSrc={Logo}
-//     text='Buscando las llaves de la sala...'
-//   > 
+        <LoadingScreen
+    loading={isLoading}
+    bgColor='#ff5757'
+    //spinnerColor='#9ee5f8'
+    textColor='white'
+    logoSrc={Logo}
+    text='Buscando las llaves de la sala...'
+  > 
         
         <div>
             
@@ -428,7 +428,7 @@ export default function HorariosSala() {
               form={form}
               style={{ marginTop: "10px" }}
             > */}
-                <Col>
+                <Col xs={22} sm={14} md={12} lg={10} xl={8}>
                     {/* <Form.Item
                         name="schedule"
                         values="schedule"
@@ -529,10 +529,10 @@ export default function HorariosSala() {
         {GoogleSign()}
 
 
-        <p style={{textAlign: "center"}}>
+        <p style={{textAlign: "center", marginTop: "4%"}}>
           Made with {<HeartFilled />} by PFGang
         </p>
         </div>
-        // {/* </LoadingScreen>     */}
+    </LoadingScreen>
     )
 }
