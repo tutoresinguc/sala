@@ -420,7 +420,7 @@ export default function HorariosSala() {
         
 
 
-        <Card style={{ width: 600 }}>
+        <Card style={{ width: 600, alignItems: 'center'}}>
         
             {/* <Form
               name="basic"
