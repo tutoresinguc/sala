@@ -1,6 +1,6 @@
 {
   "files": {
-    "main.css": "/sala/static/css/main.9b44a4af.chunk.css",
+    "main.css": "/sala/static/css/main.bb2aa971.chunk.css",
     "main.js": "/sala/static/js/main.41c0c5f1.chunk.js",
     "main.js.map": "/sala/static/js/main.41c0c5f1.chunk.js.map",
     "runtime-main.js": "/sala/static/js/runtime-main.4154a107.js",
@@ -12,7 +12,7 @@
     "static/js/3.19a00dde.chunk.js.map": "/sala/static/js/3.19a00dde.chunk.js.map",
     "index.html": "/sala/index.html",
     "static/css/2.fb62ccda.chunk.css.map": "/sala/static/css/2.fb62ccda.chunk.css.map",
-    "static/css/main.9b44a4af.chunk.css.map": "/sala/static/css/main.9b44a4af.chunk.css.map",
+    "static/css/main.bb2aa971.chunk.css.map": "/sala/static/css/main.bb2aa971.chunk.css.map",
     "static/js/2.fb835c39.chunk.js.LICENSE.txt": "/sala/static/js/2.fb835c39.chunk.js.LICENSE.txt",
     "static/media/logo.605cbd06.gif": "/sala/static/media/logo.605cbd06.gif",
     "static/media/logo.6ce24c58.svg": "/sala/static/media/logo.6ce24c58.svg"
@@ -21,7 +21,7 @@
     "static/js/runtime-main.4154a107.js",
     "static/css/2.fb62ccda.chunk.css",
     "static/js/2.fb835c39.chunk.js",
-    "static/css/main.9b44a4af.chunk.css",
+    "static/css/main.bb2aa971.chunk.css",
     "static/js/main.41c0c5f1.chunk.js"
   ]
 }
