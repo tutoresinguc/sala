@@ -406,7 +406,7 @@ export default function HorariosSala() {
         <LoadingScreen
     loading={isLoading}
     bgColor='#ff5757'
-    //spinnerColor='#9ee5f8'
+    spinnerColor='#9ee5f8'
     textColor='white'
     logoSrc={Logo}
     text='Buscando las llaves de la sala...'
