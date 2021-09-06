@@ -135,8 +135,7 @@ export default function HorariosSala() {
         //console.log(week)
         // console.log(response);
         console.log("AAA", response)
-        if (response.includes("Ws")) {
-        console.log(response, response.includes("Ws"))
+        if (response["Ws"]) {
         setEmail(response["Ws"]["Ht"])
         setName(response["Ws"]["Qe"])
         setGoogleImage(response["Ws"]["wJ"])
