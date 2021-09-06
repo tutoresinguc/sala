@@ -83,7 +83,7 @@ export default function HorariosSala() {
                                         "rol": []
                                         })
     // const [form] = Form.useForm();
-
+    let tiempo_paso = false;
     function reloadSchedule () {    axios
         .get(url, {}, {headers: {"Access-Control-Allow-Origin": "*"}})
                                     
@@ -120,14 +120,20 @@ export default function HorariosSala() {
         }
         sleep(3000)
         .then( () => {
-                setIsLoading(false)
+                setIsLoading(false);
+                console.log("deberia salirse la carga");
+                tiempo_paso = true;
 
-        }
-         )
-         
+        })
          
 
     };
+    useEffect(() => {
+        if(tiempo_paso === true){
+            setIsLoading(false);
+            console.log("deberia salirse po");
+        }
+    }, [tiempo_paso]);
 
     const responseGoogle = (response) => {
         
@@ -397,14 +403,14 @@ export default function HorariosSala() {
 
     return (
 
-        <LoadingScreen
-    loading={isLoading}
-    bgColor='#ff5757'
-    //spinnerColor='#9ee5f8'
-    textColor='white'
-    logoSrc={Logo}
-    text='Buscando las llaves de la sala...'
-  > 
+//         <LoadingScreen
+//     loading={isLoading}
+//     bgColor='#ff5757'
+//     //spinnerColor='#9ee5f8'
+//     textColor='white'
+//     logoSrc={Logo}
+//     text='Buscando las llaves de la sala...'
+//   > 
         
         <div>
             
@@ -527,6 +533,6 @@ export default function HorariosSala() {
           Made with {<HeartFilled />} by PFGang
         </p>
         </div>
-        </LoadingScreen>    
+        // {/* </LoadingScreen>     */}
     )
 }
