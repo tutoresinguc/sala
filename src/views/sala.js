@@ -118,7 +118,7 @@ export default function HorariosSala() {
 
             }
         }
-        sleep(3000)
+        sleep(2000)
         .then( () => {
                 setIsLoading(false);
                 console.log("deberia salirse la carga");
