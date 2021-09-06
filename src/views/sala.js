@@ -428,7 +428,7 @@ export default function HorariosSala() {
               form={form}
               style={{ marginTop: "10px" }}
             > */}
-                <Col xs={22} sm={14} md={12} lg={10} xl={8}>
+                <Col xs={16} sm={20} md={24} lg={28} xl={44}>
                     {/* <Form.Item
                         name="schedule"
                         values="schedule"
