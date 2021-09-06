@@ -11,6 +11,7 @@ import Logo from '../logo.gif';
 
 
 let api = "https://sala-tutorxs.herokuapp.com"
+const googleKey = process.env.GOOGLE_API;
 // api = "localhost:5000"
 
 
@@ -374,7 +375,7 @@ export default function HorariosSala() {
 
         if (!tutore || !tutore["email"]) {
             return <GoogleLogin
-            clientId="808906601781-26v2s8buno09vr8u6ftnvfonv598o5ft.apps.googleusercontent.com"
+            clientId={googleKey}
             buttonText="Login"
             onSuccess={responseGoogle}
             onFailure={responseGoogle}
@@ -384,7 +385,7 @@ export default function HorariosSala() {
             } else {
             
             return <GoogleLogout
-            clientId="808906601781-26v2s8buno09vr8u6ftnvfonv598o5ft.apps.googleusercontent.com"
+            clientId={googleKey}
             buttonText="Logout"
             onLogoutSuccess={responseGoogle}
             >
