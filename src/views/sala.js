@@ -12,7 +12,7 @@ import Logo from '../logo.gif';
 
 let api = "https://sala-tutorxs.herokuapp.com"
 const googleKey = process.env.REACT_APP_GOOGLE;
-// api = "localhost:5000"
+api = "http://localhost:5000"
 
 
 const style = { background: '#0092ff', padding: '8px 0' };
@@ -82,6 +82,7 @@ export default function HorariosSala() {
                                         "gda": "",
                                         "rol": []
                                         })
+    // const [rol, setRol] = useState(false)
     // const [form] = Form.useForm();
     let tiempo_paso = false;
     function reloadSchedule () {    axios
@@ -120,7 +121,7 @@ export default function HorariosSala() {
         }
         sleep(2000)
         .then( () => {
-                setIsLoading(false);
+                //setIsLoading(false);
                 console.log("deberia salirse la carga");
                 tiempo_paso = true;
 
@@ -130,18 +131,19 @@ export default function HorariosSala() {
     };
     useEffect(() => {
         if(tiempo_paso === true){
-            setIsLoading(false);
+            //setIsLoading(false);
             console.log("deberia salirse po");
         }
     }, [tiempo_paso]);
 
     const responseGoogle = (response) => {
-        
+        reloadSchedule();
         
         //console.log(week)
         // console.log(response);
-        console.log("AAA", response)
-        if (response["Ws"]) {
+        console.log("AAA", response);
+        
+        if (response) {
         setEmail(response["Ws"]["Ht"])
         setName(response["Ws"]["Qe"])
         setGoogleImage(response["Ws"]["wJ"])
@@ -153,6 +155,7 @@ export default function HorariosSala() {
             setTutore(response["data"])
             setNombre(response["data"]["apodo"])
             setNombreNew(response["data"]["apodo"])
+            // setRol(response["data"]["rol"])
         })
         .catch((err) => {
         console.log(err);
@@ -249,6 +252,37 @@ export default function HorariosSala() {
         }
 
         return [colorSelected, colorNotSelected, colorMouse]
+    }
+
+    const modSchedule = () => {
+        axios.post(`${api}/horarios/modificar`, {'tutore': tutore, 'schedule': schedule }, {'tutore': tutore, 'schedule': schedule})
+        .then( (response) => {
+            reloadSchedule();
+        })
+        .catch( (err) => {
+            console.log(err)
+        })
+    };
+
+    const boton = () => {
+        if (tutore["rol"]) {
+            if (tutore["rol"].includes("pfg") || tutore["rol"].includes("supertutore")) {
+                return  <Button type="primary"
+                size="large"
+                // htmlType="submit"
+                style={{
+                    textAlign: "center",
+                    marginTop: "5%",
+                    borderRadius: "10px",
+                    fontSize: "15px",
+                    color: "white"
+                }}
+                onClick={modSchedule}>
+                Modificar Horario
+             </Button> }
+        } else {
+            return 
+        }
     }
 
     const colorTutorxs = (tutore) => {
@@ -403,14 +437,14 @@ export default function HorariosSala() {
 
     return (
 
-       /* { <LoadingScreen
-    loading={isLoading}
+     <LoadingScreen
+    loading={!isLoading}
     bgColor='#ff5757'
     spinnerColor='#9ee5f8'
     textColor='white'
     logoSrc={Logo}
     text='Buscando las llaves de la sala...'
-  > }*/
+  > 
         
         <div>
             
@@ -498,6 +532,8 @@ export default function HorariosSala() {
                         >
                             Enviar
                     </Button>
+
+                    {boton()}
                     <Input placeholder='Cambiar tu nombre' value={nombre}  style={{ marginTop: '1%' }} onChange={(d) => setNombre(d.target.value)}/>
                     {/* </Form.Item> */}
                     <Button
@@ -533,6 +569,6 @@ export default function HorariosSala() {
           Made with {<HeartFilled />} by PFGang
         </p>
         </div>
-    // </LoadingScreen>
+    </LoadingScreen>
     )
 }
