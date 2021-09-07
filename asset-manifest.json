@@ -1,8 +1,8 @@
 {
   "files": {
     "main.css": "/sala/static/css/main.5c30e8b0.chunk.css",
-    "main.js": "/sala/static/js/main.3f173b41.chunk.js",
-    "main.js.map": "/sala/static/js/main.3f173b41.chunk.js.map",
+    "main.js": "/sala/static/js/main.3fd69275.chunk.js",
+    "main.js.map": "/sala/static/js/main.3fd69275.chunk.js.map",
     "runtime-main.js": "/sala/static/js/runtime-main.4154a107.js",
     "runtime-main.js.map": "/sala/static/js/runtime-main.4154a107.js.map",
     "static/css/2.fb62ccda.chunk.css": "/sala/static/css/2.fb62ccda.chunk.css",
@@ -22,6 +22,6 @@
     "static/css/2.fb62ccda.chunk.css",
     "static/js/2.9f6ea641.chunk.js",
     "static/css/main.5c30e8b0.chunk.css",
-    "static/js/main.3f173b41.chunk.js"
+    "static/js/main.3fd69275.chunk.js"
   ]
 }
