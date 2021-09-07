@@ -413,7 +413,7 @@ export default function HorariosSala() {
 
     const GoogleSign = () => {
 
-        if (!tutore || !tutore["email"]) {
+        if (!tutore || !tutore["email"] || !tutore["apodo"]) {
             return <GoogleLogin
             clientId={googleKey}
             buttonText="Login"
