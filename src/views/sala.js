@@ -143,7 +143,7 @@ export default function HorariosSala() {
         // console.log(response);
         console.log("AAA", response);
         
-        if (response) {
+        if (response && "Ws" in response) {
         setEmail(response["Ws"]["Ht"])
         setName(response["Ws"]["Qe"])
         setGoogleImage(response["Ws"]["wJ"])
