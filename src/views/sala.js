@@ -403,14 +403,14 @@ export default function HorariosSala() {
 
     return (
 
-        <LoadingScreen
+       /* { <LoadingScreen
     loading={isLoading}
     bgColor='#ff5757'
     spinnerColor='#9ee5f8'
     textColor='white'
     logoSrc={Logo}
     text='Buscando las llaves de la sala...'
-  > 
+  > }*/
         
         <div>
             
@@ -533,6 +533,6 @@ export default function HorariosSala() {
           Made with {<HeartFilled />} by PFGang
         </p>
         </div>
-    </LoadingScreen>
+    // </LoadingScreen>
     )
 }
