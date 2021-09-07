@@ -12,7 +12,7 @@ import Logo from '../logo.gif';
 
 let api = "https://sala-tutorxs.herokuapp.com"
 const googleKey = process.env.REACT_APP_GOOGLE;
-api = "http://localhost:5000"
+// api = "http://localhost:5000"
 
 
 const style = { background: '#0092ff', padding: '8px 0' };
