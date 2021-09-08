@@ -12,7 +12,7 @@ import Logo from '../logo.gif';
 
 let api = "https://sala-tutorxs.herokuapp.com"
 const googleKey = process.env.REACT_APP_GOOGLE;
-api = "http://localhost:5000"
+// api = "http://localhost:5000"
 
 
 const style = { background: '#0092ff', padding: '8px 0' };
@@ -39,8 +39,13 @@ let cupos = 0
 let cupos0 = '(0/4)'
 let valor = 0;
 
+
+
 let url = `${api}/week` //"https://sala-tutorxs.herokuapp.com/week";
-function loadSchedule () {    axios
+function loadSchedule () {    
+        
+
+        axios
         .get(url, {}, {headers: {"Access-Control-Allow-Origin": "*"}})
                                     
         .then((response) => {
@@ -58,6 +63,8 @@ function loadSchedule () {    axios
 
         });
 
+        console.log("oli")
+
     };
 
 loadSchedule();
@@ -71,6 +78,7 @@ export default function HorariosSala() {
     const [name, setName] = useState('')
     const [week, setWeek] = useState(new Date())
     const [isLoading, setIsLoading] = useState(true)
+    const [firstLoading, setFirstLoading] = useState(false)
     const [googleImage, setGoogleImage] = useState("")
     const [nombreNew, setNombreNew] = useState('')
     const [tutore, setTutore] = useState({"email": "",
@@ -114,10 +122,7 @@ export default function HorariosSala() {
         // https://www.sitepoint.com/delay-sleep-pause-wait/
         function sleep(s) {
             return new Promise(resolve => setTimeout(resolve, s))
-            let tiempo = new Date() + s;
-            while (new Date() < tiempo) {
-
-            }
+          
         }
         sleep(2000)
         .then( () => {
@@ -143,7 +148,7 @@ export default function HorariosSala() {
         // console.log(response);
         console.log("AAA", response);
         
-        if (response) {
+        if (response && "Ws" in response) {
         setEmail(response["Ws"]["Ht"])
         setName(response["Ws"]["Qe"])
         setGoogleImage(response["Ws"]["wJ"])
@@ -337,7 +342,6 @@ export default function HorariosSala() {
             console.log("HORA AAAAAAAAAAAAAA");
             console.log(colorSelected)
         }
-
         if (time === Date.parse(new Date("2021-09-05 7:00:00"))) {
             console.log("HORA AAAAAAAAAAAAAA");
             console.log(colorSelected)
@@ -413,7 +417,7 @@ export default function HorariosSala() {
 
     const GoogleSign = () => {
 
-        if (!tutore || !tutore["email"]) {
+        if (!tutore || !tutore["email"] || !tutore["apodo"]) {
             return <GoogleLogin
             clientId={googleKey}
             buttonText="Login"
@@ -433,13 +437,28 @@ export default function HorariosSala() {
         }
     }
 
+    function sleep(s) {
+        return new Promise(resolve => setTimeout(resolve, s))
+    }
+
+    if (!firstLoading) {
+        reloadSchedule();
+    sleep(1380)
+    .then( () => {
+        
+        setFirstLoading(true);
+        setIsLoading(false);
+    })
+    }
+
     // console.log(horarios)
 
     return (
     
      <LoadingScreen
-    loading={!isLoading}
-    bgColor='#cc0000'
+
+    loading={isLoading}
+    bgColor='#ff5757' // '#cc0000'
     spinnerColor='#9ee5f8'
     textColor='white'
     logoSrc={Logo}
