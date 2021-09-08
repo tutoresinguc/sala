@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react';
-import { Row, Col, Button, Card, Input, Form } from 'antd';
-import { HeartFilled } from '@ant-design/icons';
+import { Row, Col, Button, Card, Input, Divider, Space } from 'antd';
+import { HeartFilled, ReloadOutlined, MailOutlined, UserOutlined } from '@ant-design/icons';
 import ScheduleSelector from 'react-schedule-selector';
 import axios from "axios";
 import { Header } from 'antd/lib/layout/layout';
@@ -426,7 +426,7 @@ export default function HorariosSala() {
             cookiePolicy={'single_host_origin'}
             isSignedIn={true}
             />
-            } else {
+        } else {
             
             return <GoogleLogout
             clientId={googleKey}
@@ -434,7 +434,7 @@ export default function HorariosSala() {
             onLogoutSuccess={responseGoogle}
             >
             </GoogleLogout>
-            }
+        }
     }
 
     function sleep(s) {
@@ -454,138 +454,157 @@ export default function HorariosSala() {
     // console.log(horarios)
 
     return (
-
+    
      <LoadingScreen
+
     loading={isLoading}
-    bgColor='#ff5757'
+    bgColor='#ff5757' // '#cc0000'
     spinnerColor='#9ee5f8'
     textColor='white'
     logoSrc={Logo}
     text='Buscando las llaves de la sala...'
   > 
-        
-        <div>
+        <div id="home" className="wave-container">
+            <Row justify="center" style={{marginLeft: "15px", marginRight: "15px"}}>
+            <Space size="small" direction="vertical">
+                <h1 className="title">Sala de Tutores</h1>
+                <p className="description">Reserva tus módulos en la sala de Tutores!</p>
+                {GoogleSign()}
+            </Space>
+            </Row>
+            {/*<img src={imagen} className="imgHeader" alt="" />*/}
+
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320">
+            <path fill="#F5A5A5" fill-opacity="0.8" d="M0,256L26.7,256C53.3,256,107,256,160,218.7C213.3,181,267,107,320,112C373.3,117,427,203,480,208C533.3,213,587,139,640,138.7C693.3,139,747,213,800,218.7C853.3,224,907,160,960,122.7C1013.3,85,1067,75,1120,80C1173.3,85,1227,107,1280,138.7C1333.3,171,1387,213,1413,234.7L1440,256L1440,320L1413.3,320C1386.7,320,1333,320,1280,320C1226.7,320,1173,320,1120,320C1066.7,320,1013,320,960,320C906.7,320,853,320,800,320C746.7,320,693,320,640,320C586.7,320,533,320,480,320C426.7,320,373,320,320,320C266.7,320,213,320,160,320C106.7,320,53,320,27,320L0,320Z"></path>
+
+            <path fill="#fff" fill-opacity="1" d="M0,64L30,58.7C60,53,120,43,180,80C240,117,300,203,360,234.7C420,267,480,245,540,224C600,203,660,181,720,154.7C780,128,840,96,900,106.7C960,117,1020,171,1080,197.3C1140,224,1200,224,1260,240C1320,256,1380,288,1410,304L1440,320L1440,320L1410,320C1380,320,1320,320,1260,320C1200,320,1140,320,1080,320C1020,320,960,320,900,320C840,320,780,320,720,320C660,320,600,320,540,320C480,320,420,320,360,320C300,320,240,320,180,320C120,320,60,320,30,320L0,320Z"></path>
+            </svg>
+
+        </div>
+
+        <div id="reservar">
+            <h1></h1>
+            <Space align="center" direction="vertical" size="small">
+                {/*<p>{<MailOutlined />} {email}</p>*/}
+                {(nombreNew === '') && 
+                    <p className="username">{<UserOutlined />} {name}</p>
+                }
+                {(nombreNew !== '') && 
+                    <p className="username">{<UserOutlined />} {nombreNew}</p>
+                }
+            </Space> 
+            <Row justify="center">
+                <Card style={{alignItems: 'center', maxWidth: 600}} bordered={false}>
+                
+                    {/* <Form
+                    name="basic"
+                    onFinish={onFinish}
+                    form={form}
+                    style={{ marginTop: "10px" }}
+                    > */}
+                        <Col xs={24} sm={30} md={36} lg={44} xl={50}>
+                            {/* <Form.Item
+                                name="schedule"
+                                values="schedule"
+                                // dependencies={["contrasena"]}
+                                validateTrigger="onBlur"
+                                rules={[
+                                {
+                                    required: true,
+                                    message: "Por favor pon algun horario",
+                                },
+                                {
+                                    validator: validateFields,
+                                }
+                                ]}
+                            > */}
+                                <ScheduleSelector timeFormat='h' startDate={week}  numDays={5} minTime={1} maxTime={8} 
+                                                selection={schedule.schedule} onChange={handleChange}
+                                                renderDateCell={renderCustomDateCell}  dateFormat='DD/MM'
+                                /> 
+                            {/* </Form.Item> */}
+                            {/* <Form.Item
+                                name="nombre"
+                                values="nombre"
+                                // dependencies={["contrasena"]}
+                                validateTrigger="onBlur"
+                                rules={[
+                                {
+                                    required: true,
+                                    message: "Pon tu nombreeee",
+                                },
+                                {
+                                    validator: validateFields,
+                                }
+                                ]}
+                            > */}
+                            <p style={{marginTop:'2%'}}>Tutores en la casilla: {selected}</p>
+                            {/* </Form.Item> */}
+                            <Space>
+                                <Button
+                                        type="primary"
+                                        
+                                        // htmlType="submit"
+                                        style={{
+                                            textAlign: "center",
+                                            marginTop: "5%",
+                                            borderRadius: "10px",
+                                            fontSize: "15px",
+                                            color: "white"
+                                        }}
+                                        onClick={reloadSchedule}
+                                    >
+                                        {<ReloadOutlined />}
+                                </Button>
+                                
+                                <Button
+                                        type="primary"
+                                        
+                                        // htmlType="submit"
+                                        style={{
+                                            textAlign: "center",
+                                            marginTop: "5%",
+                                            borderRadius: "10px",
+                                            fontSize: "15px",
+                                            color: "white"
+                                        }}
+                                        onClick={sendSchedule}
+                                    >
+                                        Enviar
+                                </Button>
+                            </Space>
+                            {boton()}
+                            
+                            <Input placeholder='Cambiar tu nombre' value={nombre}  style={{ marginTop: '1%' }} onChange={(d) => setNombre(d.target.value)}/>
+                            {/* </Form.Item> */}
+                            <Button
+                                    type="primary"
+                                    
+                                    // htmlType="submit"
+                                    style={{
+                                        textAlign: "center",
+                                        marginTop: "5%",
+                                        borderRadius: "10px",
+                                        fontSize: "15px",
+                                        color: "white"
+                                    }}
+                                    onClick={sendRequest}
+                                >
+                                    Cambiar mi nombre
+                            </Button>
+                        </Col>
+                    {/* </Form> */}
+                </Card>
+            </Row>
+            {/*
+            <img src={googleImage}></img>
+            */}
             
-    
-        <h1>Salita Tutores 🥰</h1>
-
-        
 
 
-        <Card style={{alignItems: 'center'}}>
-        
-            {/* <Form
-              name="basic"
-              onFinish={onFinish}
-              form={form}
-              style={{ marginTop: "10px" }}
-            > */}
-                <Col xs={24} sm={30} md={36} lg={44} xl={50}>
-                    {/* <Form.Item
-                        name="schedule"
-                        values="schedule"
-                        // dependencies={["contrasena"]}
-                        validateTrigger="onBlur"
-                        rules={[
-                        {
-                            required: true,
-                            message: "Por favor pon algun horario",
-                        },
-                        {
-                            validator: validateFields,
-                        }
-                        ]}
-                    > */}
-                        <ScheduleSelector timeFormat='h' startDate={week}  numDays={5} minTime={1} maxTime={8} 
-                                        selection={schedule.schedule} onChange={handleChange}
-                                        renderDateCell={renderCustomDateCell}  dateFormat='DD/MM'
-                        /> 
-                    {/* </Form.Item> */}
-                    {/* <Form.Item
-                        name="nombre"
-                        values="nombre"
-                        // dependencies={["contrasena"]}
-                        validateTrigger="onBlur"
-                        rules={[
-                        {
-                            required: true,
-                            message: "Pon tu nombreeee",
-                        },
-                        {
-                            validator: validateFields,
-                        }
-                        ]}
-                    > */}
-                    <p style={{marginTop:'2%'}}>Tutores en la casilla: {selected}</p>
-                    {/* </Form.Item> */}
-                    
-                    <Button
-                            type="primary"
-                            size="large"
-                            // htmlType="submit"
-                            style={{
-                                textAlign: "center",
-                                marginTop: "5%",
-                                borderRadius: "10px",
-                                fontSize: "15px",
-                                color: "white"
-                            }}
-                            onClick={reloadSchedule}
-                        >
-                            Recargar
-                    </Button>
-                    
-                    <Button
-                            type="primary"
-                            size="large"
-                            // htmlType="submit"
-                            style={{
-                                textAlign: "center",
-                                marginTop: "5%",
-                                borderRadius: "10px",
-                                fontSize: "15px",
-                                color: "white"
-                            }}
-                            onClick={sendSchedule}
-                        >
-                            Enviar
-                    </Button>
-
-                    {boton()}
-                    <Input placeholder='Cambiar tu nombre' value={nombre}  style={{ marginTop: '1%' }} onChange={(d) => setNombre(d.target.value)}/>
-                    {/* </Form.Item> */}
-                    <Button
-                            type="primary"
-                            size="large"
-                            // htmlType="submit"
-                            style={{
-                                textAlign: "center",
-                                marginTop: "5%",
-                                borderRadius: "10px",
-                                fontSize: "15px",
-                                color: "white"
-                            }}
-                            onClick={sendRequest}
-                        >
-                            Cambiar mi nombre
-                    </Button>
-                </Col>
-            {/* </Form> */}
-        </Card>
-        
-        {/*
-        <img src={googleImage}></img>
-        */}
-        <h1>{email}</h1>
-        <h1>{name}</h1>
-        <h1>{nombreNew}</h1>
-
-        {GoogleSign()}
-
-
-        <p style={{textAlign: "center", marginTop: "4%"}}>
-          Made with {<HeartFilled />} by PFGang
-        </p>
+            <p style={{textAlign: "center", marginTop: "4%"}}>
+            Made with {<HeartFilled />} by PFGang
+            </p>
         </div>
     </LoadingScreen>
     )
