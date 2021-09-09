@@ -55,6 +55,11 @@ h1, h2, h3, h4, p, span, text, a {
   border-color: var(--rojo) !important;
 }
 
+.ant-btn-primary-3 {
+  background-color: var(--rojo);
+  border-color: var(--rojo);
+}
+
 /* HEADER */
 
 .header {
@@ -176,6 +181,7 @@ h1, h2, h3, h4, p, span, text, a {
   transform-origin: bottom;
   animation: animateWave 1000ms cubic-bezier(0.23, 1, 0.32, 1) forwards;
 }
+
 
 /* RESERVAS */
 .username {

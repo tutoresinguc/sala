@@ -10,7 +10,7 @@ import Logo from '../logo.gif';
 
 
 
-let api = "https://sala-tutorxs.herokuapp.com"
+let api = "http://localhost:5000"// "https://sala-tutorxs.herokuapp.com"
 const googleKey = process.env.REACT_APP_GOOGLE;
 // api = "http://localhost:5000"
 
@@ -70,13 +70,14 @@ function loadSchedule () {
 loadSchedule();
 
 export default function HorariosSala() {
-
+    let date = new Date();
+    date.setDate(date.getDate() - date.getDay() + 1 )
     const [schedule, setSchedule] = useState({});
     const [nombre, setNombre] = useState('');
     const [selected, setSelected] = useState('');
     const [email, setEmail] = useState('');
     const [name, setName] = useState('')
-    const [week, setWeek] = useState(new Date())
+    const [week, setWeek] = useState(date)
     const [isLoading, setIsLoading] = useState(true)
     const [firstLoading, setFirstLoading] = useState(false)
     const [googleImage, setGoogleImage] = useState("")
@@ -102,8 +103,9 @@ export default function HorariosSala() {
             // console.log(`aaa ${response["data"]}`)
             
         horarios = response["data"]['schedule'];
-        valor = new Date(horarios[0]["date"]);
+        valor = new Date(`${response["data"]["start"]} 13:00:00`);
         setWeek(valor);
+        console.log(valor, week)
         cupos = response["data"]['cupos'];
         cupos0 = response["data"]['cupos_0'];
         setSchedule({})
@@ -146,7 +148,7 @@ export default function HorariosSala() {
         
         //console.log(week)
         // console.log(response);
-        console.log("AAA", response);
+        //console.log("AAA", response);
         
         if (response && "Ws" in response) {
         setEmail(response["Ws"]["Ht"])
@@ -172,9 +174,11 @@ export default function HorariosSala() {
         } else {
             setEmail("")
             setName("")
+            setNombreNew("")
             setTutore({"email": "", "nombre": "", "pronombre": "",
                     "apodo": "", "gds": "", "tiene_llave": false,
                     "rol": [], "gda": "" })
+            
         }
 
         //setNombre(tutore["apodo"])
@@ -269,12 +273,43 @@ export default function HorariosSala() {
         })
     };
 
+    const changeName = () => {
+        console.log(tutore["email"])
+        let esClase = "";
+        if (!tutore["email"]) { 
+            return <span style={{width: "100%"}}></span>
+        }
+
+        return ( 
+            <div>
+            <Input placeholder='Cambiar tu nombre' value={nombre}  style={{ marginTop: '1%' }} onChange={(d) => setNombre(d.target.value)}/>
+                            <Button
+                                    type="primary"
+                                    
+                                    // htmlType="submit"
+                                    style={{
+                                        textAlign: "center",
+                                        marginTop: "5%",
+                                        borderRadius: "10px",
+                                        fontSize: "15px",
+                                        color: "white"
+                                    }}
+                                    onClick={sendRequest}
+                                >
+                                    Cambiar mi nombre
+                            </Button>
+                            </div>
+                       
+        )
+    }
+
     const boton = () => {
         if (tutore["rol"]) {
             if (tutore["rol"].includes("pfg") || tutore["rol"].includes("supertutore")) {
-                return  <Button type="primary"
-                size="large"
+                return ( <Button type="primary"
+                // size="large"
                 // htmlType="submit"
+                
                 style={{
                     textAlign: "center",
                     marginTop: "5%",
@@ -284,7 +319,7 @@ export default function HorariosSala() {
                 }}
                 onClick={modSchedule}>
                 Modificar Horario
-             </Button> }
+             </Button> ) }
         } else {
             return 
         }
@@ -302,7 +337,7 @@ export default function HorariosSala() {
             color = 'rgba(46, 134, 193, 1)'
         }
         // console.log(tutore)
-        return <span className={"ant-btn-primary tutore"} key={tutore['nombre']} style={{backgroundColor: color, color: 'white', borderRadius: '0.3rem', borderColor: 'transparent', margin: '0.1rem', fontSize: '0.8rem', paddingTop: '0.2rem', paddingBottom: '0.26rem', paddingLeft: '0.3rem', paddingRight: '0.3rem',  verticalAlign: 'center'}}>{tutore['nombre']}</span>
+        return <span className={"ant-btn-primary-3 tutore"} key={tutore['nombre']} style={{backgroundColor: color, color: 'white', borderRadius: '0.3rem', borderColor: 'transparent', margin: '0.1rem', fontSize: '0.8rem', paddingTop: '0.2rem', paddingBottom: '0.26rem', paddingLeft: '0.3rem', paddingRight: '0.3rem',  verticalAlign: 'center'}}>{tutore['nombre']}</span>
     
             
             //for (let i in lista)
@@ -420,7 +455,7 @@ export default function HorariosSala() {
         if (!tutore || !tutore["email"] || !tutore["apodo"]) {
             return <GoogleLogin
             clientId={googleKey}
-            buttonText="Login"
+            buttonText="Iniciar Sesión ❤"
             onSuccess={responseGoogle}
             onFailure={responseGoogle}
             cookiePolicy={'single_host_origin'}
@@ -430,7 +465,7 @@ export default function HorariosSala() {
             
             return <GoogleLogout
             clientId={googleKey}
-            buttonText="Logout"
+            buttonText="Cerrar Sesión"
             onLogoutSuccess={responseGoogle}
             >
             </GoogleLogout>
@@ -443,7 +478,7 @@ export default function HorariosSala() {
 
     if (!firstLoading) {
         reloadSchedule();
-    sleep(1380)
+    sleep(2380)
     .then( () => {
         
         setFirstLoading(true);
@@ -487,7 +522,8 @@ export default function HorariosSala() {
             <Space align="center" direction="vertical" size="small">
                 {/*<p>{<MailOutlined />} {email}</p>*/}
                 {(nombreNew === '') && 
-                    <p className="username">{<UserOutlined />} {name}</p>
+                    <span></span>
+                    /*<p className="username">{<UserOutlined />} {name}</p> */
                 }
                 {(nombreNew !== '') && 
                     <p className="username">{<UserOutlined />} {nombreNew}</p>
@@ -572,27 +608,14 @@ export default function HorariosSala() {
                                     >
                                         Enviar
                                 </Button>
+
+                                {boton()}
                             </Space>
-                            {boton()}
+
+                            {changeName()}
                             
-                            <Input placeholder='Cambiar tu nombre' value={nombre}  style={{ marginTop: '1%' }} onChange={(d) => setNombre(d.target.value)}/>
-                            {/* </Form.Item> */}
-                            <Button
-                                    type="primary"
-                                    
-                                    // htmlType="submit"
-                                    style={{
-                                        textAlign: "center",
-                                        marginTop: "5%",
-                                        borderRadius: "10px",
-                                        fontSize: "15px",
-                                        color: "white"
-                                    }}
-                                    onClick={sendRequest}
-                                >
-                                    Cambiar mi nombre
-                            </Button>
-                        </Col>
+                            
+                             </Col>
                     {/* </Form> */}
                 </Card>
             </Row>
