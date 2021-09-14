@@ -1,19 +1,19 @@
 {
   "files": {
     "main.css": "/sala/static/css/main.8176e7ab.chunk.css",
-    "main.js": "/sala/static/js/main.21d09f28.chunk.js",
-    "main.js.map": "/sala/static/js/main.21d09f28.chunk.js.map",
+    "main.js": "/sala/static/js/main.edd31b94.chunk.js",
+    "main.js.map": "/sala/static/js/main.edd31b94.chunk.js.map",
     "runtime-main.js": "/sala/static/js/runtime-main.1dcad480.js",
     "runtime-main.js.map": "/sala/static/js/runtime-main.1dcad480.js.map",
     "static/css/2.fb62ccda.chunk.css": "/sala/static/css/2.fb62ccda.chunk.css",
-    "static/js/2.1332738a.chunk.js": "/sala/static/js/2.1332738a.chunk.js",
-    "static/js/2.1332738a.chunk.js.map": "/sala/static/js/2.1332738a.chunk.js.map",
+    "static/js/2.37258a94.chunk.js": "/sala/static/js/2.37258a94.chunk.js",
+    "static/js/2.37258a94.chunk.js.map": "/sala/static/js/2.37258a94.chunk.js.map",
     "static/js/3.d139affc.chunk.js": "/sala/static/js/3.d139affc.chunk.js",
     "static/js/3.d139affc.chunk.js.map": "/sala/static/js/3.d139affc.chunk.js.map",
     "index.html": "/sala/index.html",
     "static/css/2.fb62ccda.chunk.css.map": "/sala/static/css/2.fb62ccda.chunk.css.map",
     "static/css/main.8176e7ab.chunk.css.map": "/sala/static/css/main.8176e7ab.chunk.css.map",
-    "static/js/2.1332738a.chunk.js.LICENSE.txt": "/sala/static/js/2.1332738a.chunk.js.LICENSE.txt",
+    "static/js/2.37258a94.chunk.js.LICENSE.txt": "/sala/static/js/2.37258a94.chunk.js.LICENSE.txt",
     "static/media/logo.605cbd06.gif": "/sala/static/media/logo.605cbd06.gif",
     "static/media/logo.6ce24c58.svg": "/sala/static/media/logo.6ce24c58.svg",
     "static/media/logo.f4f94bfe.svg": "/sala/static/media/logo.f4f94bfe.svg"
@@ -21,8 +21,8 @@
   "entrypoints": [
     "static/js/runtime-main.1dcad480.js",
     "static/css/2.fb62ccda.chunk.css",
-    "static/js/2.1332738a.chunk.js",
+    "static/js/2.37258a94.chunk.js",
     "static/css/main.8176e7ab.chunk.css",
-    "static/js/main.21d09f28.chunk.js"
+    "static/js/main.edd31b94.chunk.js"
   ]
 }
