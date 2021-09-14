@@ -6,7 +6,7 @@ import logo from '../img/logo.svg'
 const { Link } = Anchor;
 
 export default function AppHeader(info) {
-  console.log(info)
+  
   return (
     <div>
       <div className="header">
@@ -19,8 +19,6 @@ export default function AppHeader(info) {
           </Anchor>
         </Row>
       </div>
-      
-
     </div>
   );
 }

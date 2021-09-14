@@ -208,3 +208,18 @@ h1, h2, h3, h4, p, span, text, a {
     margin: 0rem 0rem 0rem 0rem;
   }
 }
+
+/* HORARIO */
+.ScheduleSelector__DateLabel-sc-1ke4ka2-4 {
+  /* font-size: 1rem !important; */
+  font-weight: bold !important;
+}
+
+.ScheduleSelector__GridCell-sc-1ke4ka2-2 {
+  height: 30px;
+  width: 15vw;
+}
+
+.ant-card-body {
+  padding: 0px !important;
+}

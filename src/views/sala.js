@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import { Row, Col, Button, Card, Input, Modal, Space } from 'antd';
+import { Row, Col, Button, Card, Input, Modal, Space, Anchor } from 'antd';
 import { HeartFilled, ReloadOutlined, MailOutlined, UserOutlined } from '@ant-design/icons';
 import ScheduleSelector from 'react-schedule-selector';
 import axios from "axios";
@@ -9,14 +9,14 @@ import  LoadingScreen  from 'react-loading-screen';
 import Logo from '../logo.gif';
 import { Switch } from 'antd'
 import AppHeader from './header';
-
+import logo from '../img/logo.svg'
 
 
 let api = "https://sala-tutorxs.herokuapp.com"// "https://sala-tutorxs.herokuapp.com"
 const googleKey = process.env.REACT_APP_GOOGLE;
 // api = "http://localhost:5000"
 
-
+const { Link } = Anchor;
 const style = { background: '#0092ff', padding: '8px 0' };
 // GET de array u obj, buscar fecha y obtener personas anotadas
 /*const horarios = [
@@ -322,12 +322,10 @@ export default function HorariosSala() {
                 return ( <Button type="primary"
                 // size="large"
                 // htmlType="submit"
-                
+                shape="round"
                 style={{
                     textAlign: "center",
                     marginTop: "5%",
-                    borderRadius: "10px",
-                    fontSize: "15px",
                     color: "white"
                 }}
                 onClick={modSchedule}>
@@ -380,13 +378,18 @@ export default function HorariosSala() {
     }
 
     const renderCustomDateCell = (time, selected, innerRef) => { 
-        //console.log(innerRef
-        // console.log(selected)
-        
+
         let [colorSelected, colorNotSelected, colorMouse] = colors(time)
 
         return (
-        <div style={{ textAlign: 'center', backgroundColor: selected ? colorSelected : colorNotSelected}} 
+        <div 
+        style={{ 
+            textAlign: 'center', 
+            backgroundColor: selected ? colorSelected : colorNotSelected,
+            borderRadius: '20px',
+            height: '30px',
+            padding: '3px'
+        }} 
             ref={innerRef} onMouseOver={(c) => {
                 c.target.style.backgroundColor = colorMouse;
                 setSelected(formatTutores(time));
@@ -416,12 +419,29 @@ export default function HorariosSala() {
             // setNombreNew(response["data"]["name"])
             
         })
-        
-        reloadSchedule();
         setIsModalVisible(false);
+        reloadSchedule();
         
     }
 
+    const renderTimeLabel = (time) => {
+        let traductor = {   1: "M1",
+                        2: "M2",
+                        3: "M3",
+                        4: "AL",
+                        5: "M4",
+                        6: "M5",
+                        7: "M6"}
+
+        let traductorTime = {   1: "08:30",
+                        2: "10:00",
+                        3: "11:30",
+                        4: "13:00",
+                        5: "14:00",
+                        6: "15:30",
+                        7: "17:00"}
+        return <span>{traductorTime[time.getHours()]}</span>
+    }
 
 
     const GoogleSign = () => {
@@ -463,10 +483,6 @@ export default function HorariosSala() {
     const showModal = () => {
         setIsModalVisible(true);
     };
-    
-    const handleOk = () => {
-        setIsModalVisible(false);
-    };
 
     const handleCancel = () => {
         setIsModalVisible(false);
@@ -485,7 +501,17 @@ export default function HorariosSala() {
         text='Buscando las llaves de la sala...'
     > 
         <div className="principal">
-            <AppHeader info={nombreNew}/>
+            <div className="header">
+                <Row align="middle" justify="space-between">
+                <img src={logo} style={{ width: 50 }} alt="" />
+                <Anchor className="anchor" targetOffset="70">
+                    <Button type="link" onClick={showModal}>
+                        <Link title={nombreNew}/>
+                    </Button>
+                </Anchor>
+                </Row>
+            </div>
+
             <div id="home" className="wave-container">
                 <Row justify="center" style={{marginLeft: "15px", marginRight: "15px"}}>
                 <Space size="small" direction="vertical">
@@ -506,40 +532,25 @@ export default function HorariosSala() {
 
             
             <div id="reservar">
-                <Space align="center" direction="vertical" size="small">
-                    {(nombreNew !== '') && 
-                        <div>
-                            <p className="username">{<UserOutlined />} {nombreNew}</p>
-                            <Button 
-                            type="primary" 
-                            onClick={showModal}
-                            shape="round"
-                            style={{
-                                textAlign: "center",
-                                marginTop: "5%",
-                                color: "white"
-                            }}
-                            >
-                                Cambiar nombre
-                            </Button>
-                        </div>
-                    }
-
-                    {(tutore["rol"].includes("pfg") || tutore["rol"].includes("supertutore")) &&
-                        <Switch style={{position: "relative"}} onChange={changeMood}> </Switch> // {mood}
-                    }
-                </Space> 
                 <Row justify="center">
-                    <Card style={{alignItems: 'center', maxWidth: 600}} bordered={false}>
+                    <Card style={{alignItems: 'center'}} bordered={false}>
                     
                         <Col xs={24} sm={30} md={36} lg={44} xl={50}>
-                            <ScheduleSelector timeFormat='h' startDate={week}  numDays={weekDays} minTime={1} maxTime={8} 
-                                            selection={schedule.schedule} onChange={handleChange}
-                                            renderDateCell={renderCustomDateCell}  dateFormat='dd DD/MM'
+                            <ScheduleSelector 
+                                timeFormat='h' 
+                                startDate={week}  
+                                numDays={weekDays} 
+                                minTime={1} 
+                                maxTime={8} 
+                                selection={schedule.schedule} 
+                                onChange={handleChange}
+                                renderDateCell={renderCustomDateCell}  
+                                renderTimeLabel={renderTimeLabel}
+                                dateFormat='ddd DD'
                             /> 
-                            
-                            <p style={{marginTop:'2%'}}>Tutores en el módulo: {selected}</p>
-                            {/* </Form.Item> */}
+
+                            <br/>
+
                             <Space>
                                 <Button
                                     type="primary"
@@ -572,9 +583,29 @@ export default function HorariosSala() {
                                 </Button>
 
                                 {boton()}
+                                
                             </Space>
                             
+                            <br/>
+                            <br/>
+                            
+                            <Card
+                                title="Tutores en el módulo" 
+                                bordered={false}
+                                style={{ 
+                                    backgroundColor: "#F5F8FA",
+                                    height: "130px"
+                                }}
+                            >
+                                {selected}
+                            </Card>
                         </Col>
+                        <br/>
+                        <Space align="center" direction="vertical" size="small">
+                            {(tutore["rol"].includes("pfg") || tutore["rol"].includes("supertutore")) &&
+                                <Switch style={{position: "relative"}} onChange={changeMood}> </Switch> // {mood}
+                            }
+                        </Space> 
                     </Card>
                 </Row>
                 
