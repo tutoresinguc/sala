@@ -223,3 +223,13 @@ h1, h2, h3, h4, p, span, text, a {
 .ant-card-body {
   padding: 0px !important;
 }
+
+.dateFont {
+  font-weight: bold;
+  font-size: 1rem;
+  line-height: 1.5rem;
+}
+
+.timeFont {
+  font-weight: bold;
+}
