@@ -1,14 +1,12 @@
 import React, {useState, useEffect} from 'react';
-import { Row, Col, Button, Card, Input, Modal, Space, Anchor } from 'antd';
-import { HeartFilled, ReloadOutlined, MailOutlined, UserOutlined } from '@ant-design/icons';
+import { Row, Col, Button, Card, Input, Modal, Space, Anchor, message } from 'antd';
+import { HeartFilled, ReloadOutlined } from '@ant-design/icons';
 import ScheduleSelector from 'react-schedule-selector';
 import axios from "axios";
-import { Header } from 'antd/lib/layout/layout';
 import { GoogleLogin, GoogleLogout } from 'react-google-login';
 import  LoadingScreen  from 'react-loading-screen';
 import Logo from '../logo.gif';
 import { Switch } from 'antd'
-import AppHeader from './header';
 import logo from '../img/logo.svg'
 
 
@@ -64,9 +62,6 @@ function loadSchedule () {
         }
 
         });
-
-        console.log("oli")
-
     };
 
 loadSchedule();
@@ -96,6 +91,7 @@ export default function HorariosSala() {
                                         "gda": "",
                                         "rol": []
                                         })
+    
     // const [rol, setRol] = useState(false)
     // const [form] = Form.useForm();
     let tiempo_paso = false;
@@ -115,7 +111,6 @@ export default function HorariosSala() {
         }
 
         setWeek(valor);
-        console.log(valor, week)
         cupos = response["data"]['cupos'];
         cupos0 = response["data"]['cupos_0'];
         setSchedule({})
@@ -139,19 +134,12 @@ export default function HorariosSala() {
         sleep(2000)
         .then( () => {
                 //setIsLoading(false);
-                console.log("deberia salirse la carga");
                 tiempo_paso = true;
 
         })
          
 
     };
-    useEffect(() => {
-        if(tiempo_paso === true){
-            //setIsLoading(false);
-            console.log("deberia salirse po");
-        }
-    }, [tiempo_paso]);
 
     const responseGoogle = (response) => {
         setMood(false);
@@ -314,7 +302,6 @@ export default function HorariosSala() {
     }
 
     const changeName = () => {
-        console.log(tutore["email"])
         let esClase = "";
         if (!tutore["email"]) { 
             return <span style={{width: "100%"}}></span>
@@ -416,10 +403,13 @@ export default function HorariosSala() {
     ) }
 
     const sendSchedule = () => {
-        // const obj = {schedule: schedule, nombre: nombre}
-        // console.log("AAA", schedule)
+
         axios.post(`${api}/horarios/reservar`, {'tutore': tutore, 'schedule': schedule }, {'tutore': tutore, 'schedule': schedule})
         .then( (response) => {
+            if (!response.data.status) {
+                message.warning(response.data.message);
+            }
+            
             reloadSchedule();
         })
     }
@@ -512,7 +502,6 @@ export default function HorariosSala() {
     const handleCancel = () => {
         setIsModalVisible(false);
     };
-    // console.log(horarios)
 
     return (
     
