@@ -7,6 +7,7 @@ import { Header } from 'antd/lib/layout/layout';
 import { GoogleLogin, GoogleLogout } from 'react-google-login';
 import  LoadingScreen  from 'react-loading-screen';
 import Logo from '../logo.gif';
+import { Switch } from 'antd'
 
 
 
@@ -78,7 +79,9 @@ export default function HorariosSala() {
     const [email, setEmail] = useState('');
     const [name, setName] = useState('')
     const [week, setWeek] = useState(date)
+    const [mood, setMood] = useState(false)
     const [isLoading, setIsLoading] = useState(true)
+    const [weekDays, setWeekDays] = useState(5)
     const [firstLoading, setFirstLoading] = useState(false)
     const [googleImage, setGoogleImage] = useState("")
     const [nombreNew, setNombreNew] = useState('')
@@ -144,6 +147,8 @@ export default function HorariosSala() {
     }, [tiempo_paso]);
 
     const responseGoogle = (response) => {
+        setMood(false);
+
         reloadSchedule();
         
         //console.log(week)
@@ -243,7 +248,7 @@ export default function HorariosSala() {
             colorNotSelected = '#52BE80';
             colorMouse = '#7DCEA0';
 
-        }  else if ( not ) {
+        }  else if ( not || time.getDay() === 6 || time.getDay() === 0) {
 
             /*colorSelected = 'rgba(231, 76, 60)'
             colorNotSelected = 'rgba(241, 148, 138)'
@@ -272,6 +277,22 @@ export default function HorariosSala() {
             console.log(err)
         })
     };
+
+    const changeMood = () => {
+    
+        if (tutore["rol"].includes("pfg") || tutore["rol"].includes("supertutore")) {
+            
+            if (!mood) {
+                setWeekDays(21) 
+            } else {
+                setWeekDays(5)
+            }
+            setMood(!mood);
+        } else {
+            setMood(false);
+            setWeekDays(5)
+        }
+    }
 
     const changeName = () => {
         console.log(tutore["email"])
@@ -305,7 +326,7 @@ export default function HorariosSala() {
 
     const boton = () => {
         if (tutore["rol"]) {
-            if (tutore["rol"].includes("pfg") || tutore["rol"].includes("supertutore")) {
+            if (mood && (tutore["rol"].includes("pfg") || tutore["rol"].includes("supertutore"))) {
                 return ( <Button type="primary"
                 // size="large"
                 // htmlType="submit"
@@ -450,6 +471,8 @@ export default function HorariosSala() {
         
     }
 
+
+
     const GoogleSign = () => {
 
         if (!tutore || !tutore["email"] || !tutore["apodo"]) {
@@ -528,6 +551,10 @@ export default function HorariosSala() {
                 {(nombreNew !== '') && 
                     <p className="username">{<UserOutlined />} {nombreNew}</p>
                 }
+
+                {(tutore["rol"].includes("pfg") || tutore["rol"].includes("supertutore")) &&
+                    <Switch style={{position: "relative"}} onChange={changeMood}> </Switch> // {mood}
+                }
             </Space> 
             <Row justify="center">
                 <Card style={{alignItems: 'center', maxWidth: 600}} bordered={false}>
@@ -554,9 +581,9 @@ export default function HorariosSala() {
                                 }
                                 ]}
                             > */}
-                                <ScheduleSelector timeFormat='h' startDate={week}  numDays={5} minTime={1} maxTime={8} 
+                                <ScheduleSelector timeFormat='h' startDate={week}  numDays={weekDays} minTime={1} maxTime={8} 
                                                 selection={schedule.schedule} onChange={handleChange}
-                                                renderDateCell={renderCustomDateCell}  dateFormat='DD/MM'
+                                                renderDateCell={renderCustomDateCell}  dateFormat='dd DD/MM'
                                 /> 
                             {/* </Form.Item> */}
                             {/* <Form.Item
