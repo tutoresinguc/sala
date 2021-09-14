@@ -11,7 +11,7 @@ import { Switch } from 'antd'
 
 
 
-let api = "http://localhost:5000"// "https://sala-tutorxs.herokuapp.com"
+let api = "https://sala-tutorxs.herokuapp.com"// "https://sala-tutorxs.herokuapp.com"
 const googleKey = process.env.REACT_APP_GOOGLE;
 // api = "http://localhost:5000"
 
