@@ -4,7 +4,6 @@ import "antd/dist/antd.css";
 
 import HorariosSala from './views/sala';
 import { BrowserRouter as Switch, Route } from "react-router-dom";
-import AppHeader from './views/header';
 
 
 function App() {
@@ -12,7 +11,6 @@ function App() {
     <div className="App">
       <Switch>
         <Route exact path="/sala">
-          <AppHeader/>
           <HorariosSala />
         </Route>
       </Switch>

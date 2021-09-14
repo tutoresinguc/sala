@@ -1,21 +1,20 @@
 import React, {useState, useEffect} from 'react';
-import { Row, Col, Button, Card, Input, Divider, Space } from 'antd';
-import { HeartFilled, ReloadOutlined, MailOutlined, UserOutlined } from '@ant-design/icons';
+import { Row, Col, Button, Card, Input, Modal, Space, Anchor, message } from 'antd';
+import { HeartFilled, ReloadOutlined } from '@ant-design/icons';
 import ScheduleSelector from 'react-schedule-selector';
 import axios from "axios";
-import { Header } from 'antd/lib/layout/layout';
 import { GoogleLogin, GoogleLogout } from 'react-google-login';
 import  LoadingScreen  from 'react-loading-screen';
 import Logo from '../logo.gif';
 import { Switch } from 'antd'
-
+import logo from '../img/logo.svg'
 
 
 let api = "https://sala-tutorxs.herokuapp.com"// "https://sala-tutorxs.herokuapp.com"
 const googleKey = process.env.REACT_APP_GOOGLE;
 // api = "http://localhost:5000"
 
-
+const { Link } = Anchor;
 const style = { background: '#0092ff', padding: '8px 0' };
 // GET de array u obj, buscar fecha y obtener personas anotadas
 /*const horarios = [
@@ -63,9 +62,6 @@ function loadSchedule () {
         }
 
         });
-
-        console.log("oli")
-
     };
 
 loadSchedule();
@@ -78,6 +74,7 @@ export default function HorariosSala() {
     const [selected, setSelected] = useState('');
     const [email, setEmail] = useState('');
     const [name, setName] = useState('')
+    const [isModalVisible, setIsModalVisible] = useState(false);
     const [week, setWeek] = useState(date)
     const [mood, setMood] = useState(false)
     const [isLoading, setIsLoading] = useState(true)
@@ -94,6 +91,7 @@ export default function HorariosSala() {
                                         "gda": "",
                                         "rol": []
                                         })
+    
     // const [rol, setRol] = useState(false)
     // const [form] = Form.useForm();
     let tiempo_paso = false;
@@ -107,8 +105,12 @@ export default function HorariosSala() {
             
         horarios = response["data"]['schedule'];
         valor = new Date(`${response["data"]["start"]} 13:00:00`);
+        
+        if (mood === true) {
+            valor.setDate(valor.getDate() + 7);
+        }
+
         setWeek(valor);
-        console.log(valor, week)
         cupos = response["data"]['cupos'];
         cupos0 = response["data"]['cupos_0'];
         setSchedule({})
@@ -132,19 +134,12 @@ export default function HorariosSala() {
         sleep(2000)
         .then( () => {
                 //setIsLoading(false);
-                console.log("deberia salirse la carga");
                 tiempo_paso = true;
 
         })
          
 
     };
-    useEffect(() => {
-        if(tiempo_paso === true){
-            //setIsLoading(false);
-            console.log("deberia salirse po");
-        }
-    }, [tiempo_paso]);
 
     const responseGoogle = (response) => {
         setMood(false);
@@ -237,10 +232,14 @@ export default function HorariosSala() {
 
           if ( !verde ) {
 
-            colorSelected = 'rgba(142, 68, 173, 1)'
-            colorNotSelected = 'rgba(187, 143, 206, 1)'
-            colorMouse = '#D2B4DE'
+            colorSelected = '#e8ebed'
+            colorNotSelected = '#e8ebed'
+            colorMouse = '#e8ebed'
             
+            if (tutore["rol"].includes("pfg") || tutore["rol"].includes("supertutore")) {
+                colorSelected = '#657786';
+                colorMouse = '#8ea0ab';
+            }
 
         } else
         if (anotade) {
@@ -253,9 +252,14 @@ export default function HorariosSala() {
             /*colorSelected = 'rgba(231, 76, 60)'
             colorNotSelected = 'rgba(241, 148, 138)'
             colorMouse = '#F5B7B1'*/
-            colorSelected = 'rgba(142, 68, 173, 1)'
-            colorNotSelected = 'rgba(187, 143, 206, 1)'
-            colorMouse = '#D2B4DE'
+            colorSelected = '#e8ebed'
+            colorNotSelected = '#e8ebed'
+            colorMouse = '#b5c0c7'
+
+            if (tutore["rol"].includes("pfg") || tutore["rol"].includes("supertutore")) {
+                colorSelected = '#657786';
+                colorMouse = '#8ea0ab';
+            }
 
         } else {
 
@@ -283,10 +287,13 @@ export default function HorariosSala() {
         if (tutore["rol"].includes("pfg") || tutore["rol"].includes("supertutore")) {
             
             if (!mood) {
-                setWeekDays(21) 
+                setWeekDays(5)
+                week.setDate(week.getDate() + 7);
             } else {
                 setWeekDays(5)
+                week.setDate(week.getDate() - 7);
             }
+
             setMood(!mood);
         } else {
             setMood(false);
@@ -295,47 +302,33 @@ export default function HorariosSala() {
     }
 
     const changeName = () => {
-        console.log(tutore["email"])
         let esClase = "";
         if (!tutore["email"]) { 
             return <span style={{width: "100%"}}></span>
         }
 
         return ( 
-            <div>
-            <Input placeholder='Cambiar tu nombre' value={nombre}  style={{ marginTop: '1%' }} onChange={(d) => setNombre(d.target.value)}/>
-                            <Button
-                                    type="primary"
-                                    
-                                    // htmlType="submit"
-                                    style={{
-                                        textAlign: "center",
-                                        marginTop: "5%",
-                                        borderRadius: "10px",
-                                        fontSize: "15px",
-                                        color: "white"
-                                    }}
-                                    onClick={sendRequest}
-                                >
-                                    Cambiar mi nombre
-                            </Button>
-                            </div>
-                       
+            <Modal 
+            title="Cambia tu nombre!" 
+            visible={isModalVisible} 
+            onOk={sendRequest} 
+            onCancel={handleCancel}
+            okText="Cambiar"
+            >
+                <Input placeholder='Cambiar tu nombre' value={nombre}  style={{ marginTop: '1%' }} onChange={(d) => setNombre(d.target.value)}/>
+            </Modal>
         )
     }
 
     const boton = () => {
         if (tutore["rol"]) {
-            if (mood && (tutore["rol"].includes("pfg") || tutore["rol"].includes("supertutore"))) {
+            if (tutore["rol"].includes("pfg") || tutore["rol"].includes("supertutore")) {
                 return ( <Button type="primary"
-                // size="large"
+                // size="small"
                 // htmlType="submit"
-                
+                shape="round"
                 style={{
                     textAlign: "center",
-                    marginTop: "5%",
-                    borderRadius: "10px",
-                    fontSize: "15px",
                     color: "white"
                 }}
                 onClick={modSchedule}>
@@ -388,23 +381,18 @@ export default function HorariosSala() {
     }
 
     const renderCustomDateCell = (time, selected, innerRef) => { 
-        //console.log(innerRef
-        // console.log(selected)
-        
+
         let [colorSelected, colorNotSelected, colorMouse] = colors(time)
 
-        /*
-        if (time === Date.parse(new Date("2021-09-05 6:00:00"))) {
-            console.log("HORA AAAAAAAAAAAAAA");
-            console.log(colorSelected)
-        }
-        if (time === Date.parse(new Date("2021-09-05 7:00:00"))) {
-            console.log("HORA AAAAAAAAAAAAAA");
-            console.log(colorSelected)
-        } */
-
         return (
-        <div style={{ textAlign: 'center', backgroundColor: selected ? colorSelected : colorNotSelected}} 
+        <div 
+        style={{ 
+            textAlign: 'center', 
+            backgroundColor: selected ? colorSelected : colorNotSelected,
+            borderRadius: '20px',
+            height: '30px',
+            padding: '3px'
+        }} 
             ref={innerRef} onMouseOver={(c) => {
                 c.target.style.backgroundColor = colorMouse;
                 setSelected(formatTutores(time));
@@ -414,43 +402,14 @@ export default function HorariosSala() {
         </div>
     ) }
 
-    // const validateFields = (rule, value, callback) => {
-    //     const nombre = form.getFieldValue('nombre')
-    //     if (nombre === '') {
-    //     callback('Pon tu nombre plis');
-    //     }
-
-    //     let obj = {
-    //     schedule: form.getFieldValue('schedule'),
-    //     nombre: form.getFieldValue('nombre'),
-    //     };
-    //     console.log(obj);
-    //     // let url = "https://rafa-api.herokuapp.com/people/login";
-    //     // axios
-    //     //   .post(url, obj)
-    //     //   .then((response) => {
-    //     //     console.log(response);
-    //     //     callback();
-    //     //   })
-    //     //   .catch((err) => {
-    //     //     console.log(err);
-    //     //     if (err.response) {
-    //     //       callback(err.response.data.error);
-    //     //     } else {
-    //     //       callback('Ocurrió un error.');
-    //     //     }
-    
-    //     //   });
-    // };
-    // const onFinish = (values) => {
-    //     return;
-    // };
-
     const sendSchedule = () => {
-        // const obj = {schedule: schedule, nombre: nombre}
-        // console.log("AAA", schedule)
+
         axios.post(`${api}/horarios/reservar`, {'tutore': tutore, 'schedule': schedule }, {'tutore': tutore, 'schedule': schedule})
         .then( (response) => {
+            if (!response.data.status) {
+                message.warning(response.data.message);
+            }
+            
             reloadSchedule();
         })
     }
@@ -464,14 +423,41 @@ export default function HorariosSala() {
             setNombreNew(response["data"]["name"]);
             // console.log(schedule)
             // setNombreNew(response["data"]["name"])
-            
+            reloadSchedule();
         })
-        
-        reloadSchedule();
+        setIsModalVisible(false);
         
     }
 
+    const renderTimeLabel = (time) => {
+        let traductor = {   1: "M1",
+                        2: "M2",
+                        3: "M3",
+                        4: "AL",
+                        5: "M4",
+                        6: "M5",
+                        7: "M6"}
 
+        let traductorTime = {   1: "08:30",
+                        2: "10:00",
+                        3: "11:30",
+                        4: "13:00",
+                        5: "14:00",
+                        6: "15:30",
+                        7: "17:00"}
+        return <span className="timeFont">{traductorTime[time.getHours()]}</span>
+    }
+
+    const renderDateLabel = (date) => {
+        let traductor = {   1: "L",
+                        2: "M",
+                        3: "W",
+                        4: "J",
+                        5: "V",
+                        6: "S",
+                        0: "D"}
+        return <span className="dateFont">{traductor[date.getDay()]} {date.getDate()}</span>
+    }
 
     const GoogleSign = () => {
 
@@ -509,153 +495,144 @@ export default function HorariosSala() {
     })
     }
 
-    // console.log(horarios)
+    const showModal = () => {
+        setIsModalVisible(true);
+    };
+
+    const handleCancel = () => {
+        setIsModalVisible(false);
+    };
 
     return (
     
-     <LoadingScreen
+    <LoadingScreen
 
-    loading={isLoading}
-    bgColor='#ff5757' // '#cc0000'
-    spinnerColor='#9ee5f8'
-    textColor='white'
-    logoSrc={Logo}
-    text='Buscando las llaves de la sala...'
-  > 
-        <div id="home" className="wave-container">
-            <Row justify="center" style={{marginLeft: "15px", marginRight: "15px"}}>
-            <Space size="small" direction="vertical">
-                <h1 className="title">Sala de Tutores</h1>
-                <p className="description">Reserva tus módulos en la sala de Tutores!</p>
-                {GoogleSign()}
-            </Space>
-            </Row>
-            {/*<img src={imagen} className="imgHeader" alt="" />*/}
+        loading={isLoading}
+        bgColor='#ff5757' // '#cc0000'
+        spinnerColor='#9ee5f8'
+        textColor='white'
+        logoSrc={Logo}
+        text='Buscando las llaves de la sala...'
+    > 
+        <div className="principal">
+            <div className="header">
+                <Row align="middle" justify="space-between">
+                <img src={logo} style={{ width: 50 }} alt="" />
+                <Anchor className="anchor" targetOffset="70">
+                    <Button type="link" onClick={showModal}>
+                        <Link title={nombreNew}/>
+                    </Button>
+                </Anchor>
+                </Row>
+            </div>
 
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320">
-            <path fill="#F5A5A5" fill-opacity="0.8" d="M0,256L26.7,256C53.3,256,107,256,160,218.7C213.3,181,267,107,320,112C373.3,117,427,203,480,208C533.3,213,587,139,640,138.7C693.3,139,747,213,800,218.7C853.3,224,907,160,960,122.7C1013.3,85,1067,75,1120,80C1173.3,85,1227,107,1280,138.7C1333.3,171,1387,213,1413,234.7L1440,256L1440,320L1413.3,320C1386.7,320,1333,320,1280,320C1226.7,320,1173,320,1120,320C1066.7,320,1013,320,960,320C906.7,320,853,320,800,320C746.7,320,693,320,640,320C586.7,320,533,320,480,320C426.7,320,373,320,320,320C266.7,320,213,320,160,320C106.7,320,53,320,27,320L0,320Z"></path>
+            <div id="home" className="wave-container">
+                <Row justify="center" style={{marginLeft: "15px", marginRight: "15px"}}>
+                <Space size="small" direction="vertical">
+                    <h1 className="title">Sala de Tutores</h1>
+                    <p className="description">{<HeartFilled/>} Reserva tus módulos en la salita {<HeartFilled/>}</p>
+                    <br/>
+                    {GoogleSign()}
+                </Space>
+                </Row>
+                {/*<img src={imagen} className="imgHeader" alt="" />*/}
 
-            <path fill="#fff" fill-opacity="1" d="M0,64L30,58.7C60,53,120,43,180,80C240,117,300,203,360,234.7C420,267,480,245,540,224C600,203,660,181,720,154.7C780,128,840,96,900,106.7C960,117,1020,171,1080,197.3C1140,224,1200,224,1260,240C1320,256,1380,288,1410,304L1440,320L1440,320L1410,320C1380,320,1320,320,1260,320C1200,320,1140,320,1080,320C1020,320,960,320,900,320C840,320,780,320,720,320C660,320,600,320,540,320C480,320,420,320,360,320C300,320,240,320,180,320C120,320,60,320,30,320L0,320Z"></path>
-            </svg>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320">
+                    <path fill="#fff" fill-opacity="1" d="M0,32L60,37.3C120,43,240,53,360,85.3C480,117,600,171,720,202.7C840,235,960,245,1080,224C1200,203,1320,149,1380,122.7L1440,96L1440,320L1380,320C1320,320,1200,320,1080,320C960,320,840,320,720,320C600,320,480,320,360,320C240,320,120,320,60,320L0,320Z"></path>
+                </svg>
+            </div>
 
-        </div>
+            {(tutore.email !== "") &&
 
-        <div id="reservar">
-            <h1></h1>
-            <Space align="center" direction="vertical" size="small">
-                {/*<p>{<MailOutlined />} {email}</p>*/}
-                {(nombreNew === '') && 
-                    <span></span>
-                    /*<p className="username">{<UserOutlined />} {name}</p> */
-                }
-                {(nombreNew !== '') && 
-                    <p className="username">{<UserOutlined />} {nombreNew}</p>
-                }
-
-                {(tutore["rol"].includes("pfg") || tutore["rol"].includes("supertutore")) &&
-                    <Switch style={{position: "relative"}} onChange={changeMood}> </Switch> // {mood}
-                }
-            </Space> 
-            <Row justify="center">
-                <Card style={{alignItems: 'center', maxWidth: 600}} bordered={false}>
-                
-                    {/* <Form
-                    name="basic"
-                    onFinish={onFinish}
-                    form={form}
-                    style={{ marginTop: "10px" }}
-                    > */}
+            
+            <div id="reservar">
+                <Row justify="center">
+                    <Card style={{alignItems: 'center'}} bordered={false}>
+                    
                         <Col xs={24} sm={30} md={36} lg={44} xl={50}>
-                            {/* <Form.Item
-                                name="schedule"
-                                values="schedule"
-                                // dependencies={["contrasena"]}
-                                validateTrigger="onBlur"
-                                rules={[
-                                {
-                                    required: true,
-                                    message: "Por favor pon algun horario",
-                                },
-                                {
-                                    validator: validateFields,
-                                }
-                                ]}
-                            > */}
-                                <ScheduleSelector timeFormat='h' startDate={week}  numDays={weekDays} minTime={1} maxTime={8} 
-                                                selection={schedule.schedule} onChange={handleChange}
-                                                renderDateCell={renderCustomDateCell}  dateFormat='dd DD/MM'
-                                /> 
-                            {/* </Form.Item> */}
-                            {/* <Form.Item
-                                name="nombre"
-                                values="nombre"
-                                // dependencies={["contrasena"]}
-                                validateTrigger="onBlur"
-                                rules={[
-                                {
-                                    required: true,
-                                    message: "Pon tu nombreeee",
-                                },
-                                {
-                                    validator: validateFields,
-                                }
-                                ]}
-                            > */}
-                            <p style={{marginTop:'2%'}}>Tutores en la casilla: {selected}</p>
-                            {/* </Form.Item> */}
+                            <ScheduleSelector 
+                                timeFormat='h' 
+                                startDate={week}  
+                                numDays={weekDays} 
+                                minTime={1} 
+                                maxTime={8} 
+                                selection={schedule.schedule} 
+                                onChange={handleChange}
+                                renderDateCell={renderCustomDateCell}  
+                                renderTimeLabel={renderTimeLabel}
+                                renderDateLabel={renderDateLabel}
+                                dateFormat='ddd DD'
+                            /> 
+
+                            <br/>
+
                             <Space>
                                 <Button
-                                        type="primary"
-                                        
-                                        // htmlType="submit"
-                                        style={{
-                                            textAlign: "center",
-                                            marginTop: "5%",
-                                            borderRadius: "10px",
-                                            fontSize: "15px",
-                                            color: "white"
-                                        }}
-                                        onClick={reloadSchedule}
-                                    >
+                                    type="primary"
+                                    
+                                    // htmlType="submit"
+                                    shape="round"
+                                    style={{
+                                        textAlign: "center",
+                                        color: "white"
+                                    }}
+                                    onClick={reloadSchedule}
+                                >
                                         {<ReloadOutlined />}
                                 </Button>
                                 
                                 <Button
-                                        type="primary"
-                                        
-                                        // htmlType="submit"
-                                        style={{
-                                            textAlign: "center",
-                                            marginTop: "5%",
-                                            borderRadius: "10px",
-                                            fontSize: "15px",
-                                            color: "white"
-                                        }}
-                                        onClick={sendSchedule}
-                                    >
+                                    type="primary"
+                                    
+                                    // htmlType="submit"
+                                    shape="round"
+                                    style={{
+                                        textAlign: "center",
+                                        color: "white"
+                                    }}
+                                    onClick={sendSchedule}
+                                >
                                         Enviar
                                 </Button>
 
                                 {boton()}
+                                
                             </Space>
-
-                            {changeName()}
                             
+                            <br/>
+                            <br/>
                             
-                             </Col>
-                    {/* </Form> */}
-                </Card>
-            </Row>
-            {/*
-            <img src={googleImage}></img>
-            */}
-            
+                            <Card
+                                title="Tutores en el módulo" 
+                                bordered={false}
+                                style={{ 
+                                    backgroundColor: "#F5F8FA",
+                                    height: "130px"
+                                }}
+                            >
+                                <Row align="middle" justify="center" style={{height: '70px'}}>
+                                    {selected}
+                                </Row>
+                            </Card>
+                        </Col>
+                        <br/>
+                        <Space align="center" direction="vertical" size="small">
+                            {(tutore["rol"].includes("pfg") || tutore["rol"].includes("supertutore")) &&
+                                <Switch style={{position: "relative"}} onChange={changeMood}> </Switch> // {mood}
+                            }
+                        </Space> 
+                    </Card>
+                </Row>
+                
+            </div>
+            }
 
-
-            <p style={{textAlign: "center", marginTop: "4%"}}>
-            Made with {<HeartFilled />} by PFGang
-            </p>
+            {changeName()}
         </div>
+        <p style={{textAlign: "center", marginTop: "4%"}}>
+            Made with {<HeartFilled />} by PFGang
+        </p>
+        
     </LoadingScreen>
     )
 }
