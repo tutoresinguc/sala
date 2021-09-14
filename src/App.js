@@ -12,7 +12,6 @@ function App() {
     <div className="App">
       <Switch>
         <Route exact path="/sala">
-          <AppHeader/>
           <HorariosSala />
         </Route>
       </Switch>

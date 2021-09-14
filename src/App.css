@@ -1,8 +1,8 @@
 @import "root.css";
 
 h1, h2, h3, h4, p, span, text, a {
-  /*font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif; */
-  font-family: GTWalsheim, system-ui, sans-serif;
+  font-family: "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif; 
+  /*font-family: GTWalsheim, system-ui, sans-serif;*/
 }
 
 .App {
@@ -18,6 +18,10 @@ h1, h2, h3, h4, p, span, text, a {
   .App-logo {
     animation: App-logo-spin infinite 20s linear;
   }
+}
+
+.principal {
+  min-height: 90vh;
 }
 
 #root {
@@ -185,8 +189,22 @@ h1, h2, h3, h4, p, span, text, a {
 
 /* RESERVAS */
 .username {
-  font-size: 1.2rem;
+  font-size: 1.5rem;
   margin: 0rem 0rem 0rem 0rem;
   text-align: center;
-  color: var(--fondo)
+  color: var(--fondo);
+  font-weight: bold;
+}
+
+@media only screen and (max-width: 484px) {
+  .title {
+    line-height: 2rem;
+    font-size: 2rem;
+    margin-top: 80px;
+  }
+
+  .description {
+    font-size: 1rem;
+    margin: 0rem 0rem 0rem 0rem;
+  }
 }

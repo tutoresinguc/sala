@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import { Row, Col, Button, Card, Input, Divider, Space } from 'antd';
+import { Row, Col, Button, Card, Input, Modal, Space } from 'antd';
 import { HeartFilled, ReloadOutlined, MailOutlined, UserOutlined } from '@ant-design/icons';
 import ScheduleSelector from 'react-schedule-selector';
 import axios from "axios";
@@ -8,6 +8,7 @@ import { GoogleLogin, GoogleLogout } from 'react-google-login';
 import  LoadingScreen  from 'react-loading-screen';
 import Logo from '../logo.gif';
 import { Switch } from 'antd'
+import AppHeader from './header';
 
 
 
@@ -78,6 +79,7 @@ export default function HorariosSala() {
     const [selected, setSelected] = useState('');
     const [email, setEmail] = useState('');
     const [name, setName] = useState('')
+    const [isModalVisible, setIsModalVisible] = useState(false);
     const [week, setWeek] = useState(date)
     const [mood, setMood] = useState(false)
     const [isLoading, setIsLoading] = useState(true)
@@ -237,9 +239,9 @@ export default function HorariosSala() {
 
           if ( !verde ) {
 
-            colorSelected = 'rgba(142, 68, 173, 1)'
-            colorNotSelected = 'rgba(187, 143, 206, 1)'
-            colorMouse = '#D2B4DE'
+            colorSelected = '#e8ebed'
+            colorNotSelected = '#e8ebed'
+            colorMouse = '#e8ebed'
             
 
         } else
@@ -253,9 +255,9 @@ export default function HorariosSala() {
             /*colorSelected = 'rgba(231, 76, 60)'
             colorNotSelected = 'rgba(241, 148, 138)'
             colorMouse = '#F5B7B1'*/
-            colorSelected = 'rgba(142, 68, 173, 1)'
-            colorNotSelected = 'rgba(187, 143, 206, 1)'
-            colorMouse = '#D2B4DE'
+            colorSelected = '#e8ebed'
+            colorNotSelected = '#e8ebed'
+            colorMouse = '#e8ebed'
 
         } else {
 
@@ -302,25 +304,15 @@ export default function HorariosSala() {
         }
 
         return ( 
-            <div>
-            <Input placeholder='Cambiar tu nombre' value={nombre}  style={{ marginTop: '1%' }} onChange={(d) => setNombre(d.target.value)}/>
-                            <Button
-                                    type="primary"
-                                    
-                                    // htmlType="submit"
-                                    style={{
-                                        textAlign: "center",
-                                        marginTop: "5%",
-                                        borderRadius: "10px",
-                                        fontSize: "15px",
-                                        color: "white"
-                                    }}
-                                    onClick={sendRequest}
-                                >
-                                    Cambiar mi nombre
-                            </Button>
-                            </div>
-                       
+            <Modal 
+            title="Cambia tu nombre!" 
+            visible={isModalVisible} 
+            onOk={sendRequest} 
+            onCancel={handleCancel}
+            okText="Cambiar"
+            >
+                <Input placeholder='Cambiar tu nombre' value={nombre}  style={{ marginTop: '1%' }} onChange={(d) => setNombre(d.target.value)}/>
+            </Modal>
         )
     }
 
@@ -393,16 +385,6 @@ export default function HorariosSala() {
         
         let [colorSelected, colorNotSelected, colorMouse] = colors(time)
 
-        /*
-        if (time === Date.parse(new Date("2021-09-05 6:00:00"))) {
-            console.log("HORA AAAAAAAAAAAAAA");
-            console.log(colorSelected)
-        }
-        if (time === Date.parse(new Date("2021-09-05 7:00:00"))) {
-            console.log("HORA AAAAAAAAAAAAAA");
-            console.log(colorSelected)
-        } */
-
         return (
         <div style={{ textAlign: 'center', backgroundColor: selected ? colorSelected : colorNotSelected}} 
             ref={innerRef} onMouseOver={(c) => {
@@ -413,38 +395,6 @@ export default function HorariosSala() {
             {check_espacios(time)}
         </div>
     ) }
-
-    // const validateFields = (rule, value, callback) => {
-    //     const nombre = form.getFieldValue('nombre')
-    //     if (nombre === '') {
-    //     callback('Pon tu nombre plis');
-    //     }
-
-    //     let obj = {
-    //     schedule: form.getFieldValue('schedule'),
-    //     nombre: form.getFieldValue('nombre'),
-    //     };
-    //     console.log(obj);
-    //     // let url = "https://rafa-api.herokuapp.com/people/login";
-    //     // axios
-    //     //   .post(url, obj)
-    //     //   .then((response) => {
-    //     //     console.log(response);
-    //     //     callback();
-    //     //   })
-    //     //   .catch((err) => {
-    //     //     console.log(err);
-    //     //     if (err.response) {
-    //     //       callback(err.response.data.error);
-    //     //     } else {
-    //     //       callback('Ocurrió un error.');
-    //     //     }
-    
-    //     //   });
-    // };
-    // const onFinish = (values) => {
-    //     return;
-    // };
 
     const sendSchedule = () => {
         // const obj = {schedule: schedule, nombre: nombre}
@@ -468,6 +418,7 @@ export default function HorariosSala() {
         })
         
         reloadSchedule();
+        setIsModalVisible(false);
         
     }
 
@@ -509,153 +460,138 @@ export default function HorariosSala() {
     })
     }
 
+    const showModal = () => {
+        setIsModalVisible(true);
+    };
+    
+    const handleOk = () => {
+        setIsModalVisible(false);
+    };
+
+    const handleCancel = () => {
+        setIsModalVisible(false);
+    };
     // console.log(horarios)
 
     return (
     
-     <LoadingScreen
+    <LoadingScreen
 
-    loading={isLoading}
-    bgColor='#ff5757' // '#cc0000'
-    spinnerColor='#9ee5f8'
-    textColor='white'
-    logoSrc={Logo}
-    text='Buscando las llaves de la sala...'
-  > 
-        <div id="home" className="wave-container">
-            <Row justify="center" style={{marginLeft: "15px", marginRight: "15px"}}>
-            <Space size="small" direction="vertical">
-                <h1 className="title">Sala de Tutores</h1>
-                <p className="description">Reserva tus módulos en la sala de Tutores!</p>
-                {GoogleSign()}
-            </Space>
-            </Row>
-            {/*<img src={imagen} className="imgHeader" alt="" />*/}
+        loading={isLoading}
+        bgColor='#ff5757' // '#cc0000'
+        spinnerColor='#9ee5f8'
+        textColor='white'
+        logoSrc={Logo}
+        text='Buscando las llaves de la sala...'
+    > 
+        <div className="principal">
+            <AppHeader info={nombreNew}/>
+            <div id="home" className="wave-container">
+                <Row justify="center" style={{marginLeft: "15px", marginRight: "15px"}}>
+                <Space size="small" direction="vertical">
+                    <h1 className="title">Sala de Tutores</h1>
+                    <p className="description">{<HeartFilled/>} Reserva tus módulos en la salita {<HeartFilled/>}</p>
+                    <br/>
+                    {GoogleSign()}
+                </Space>
+                </Row>
+                {/*<img src={imagen} className="imgHeader" alt="" />*/}
 
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320">
-            <path fill="#F5A5A5" fill-opacity="0.8" d="M0,256L26.7,256C53.3,256,107,256,160,218.7C213.3,181,267,107,320,112C373.3,117,427,203,480,208C533.3,213,587,139,640,138.7C693.3,139,747,213,800,218.7C853.3,224,907,160,960,122.7C1013.3,85,1067,75,1120,80C1173.3,85,1227,107,1280,138.7C1333.3,171,1387,213,1413,234.7L1440,256L1440,320L1413.3,320C1386.7,320,1333,320,1280,320C1226.7,320,1173,320,1120,320C1066.7,320,1013,320,960,320C906.7,320,853,320,800,320C746.7,320,693,320,640,320C586.7,320,533,320,480,320C426.7,320,373,320,320,320C266.7,320,213,320,160,320C106.7,320,53,320,27,320L0,320Z"></path>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320">
+                    <path fill="#fff" fill-opacity="1" d="M0,32L60,37.3C120,43,240,53,360,85.3C480,117,600,171,720,202.7C840,235,960,245,1080,224C1200,203,1320,149,1380,122.7L1440,96L1440,320L1380,320C1320,320,1200,320,1080,320C960,320,840,320,720,320C600,320,480,320,360,320C240,320,120,320,60,320L0,320Z"></path>
+                </svg>
+            </div>
 
-            <path fill="#fff" fill-opacity="1" d="M0,64L30,58.7C60,53,120,43,180,80C240,117,300,203,360,234.7C420,267,480,245,540,224C600,203,660,181,720,154.7C780,128,840,96,900,106.7C960,117,1020,171,1080,197.3C1140,224,1200,224,1260,240C1320,256,1380,288,1410,304L1440,320L1440,320L1410,320C1380,320,1320,320,1260,320C1200,320,1140,320,1080,320C1020,320,960,320,900,320C840,320,780,320,720,320C660,320,600,320,540,320C480,320,420,320,360,320C300,320,240,320,180,320C120,320,60,320,30,320L0,320Z"></path>
-            </svg>
+            {(tutore.email !== "") &&
 
-        </div>
+            
+            <div id="reservar">
+                <Space align="center" direction="vertical" size="small">
+                    {(nombreNew !== '') && 
+                        <div>
+                            <p className="username">{<UserOutlined />} {nombreNew}</p>
+                            <Button 
+                            type="primary" 
+                            onClick={showModal}
+                            shape="round"
+                            style={{
+                                textAlign: "center",
+                                marginTop: "5%",
+                                color: "white"
+                            }}
+                            >
+                                Cambiar nombre
+                            </Button>
+                        </div>
+                    }
 
-        <div id="reservar">
-            <h1></h1>
-            <Space align="center" direction="vertical" size="small">
-                {/*<p>{<MailOutlined />} {email}</p>*/}
-                {(nombreNew === '') && 
-                    <span></span>
-                    /*<p className="username">{<UserOutlined />} {name}</p> */
-                }
-                {(nombreNew !== '') && 
-                    <p className="username">{<UserOutlined />} {nombreNew}</p>
-                }
-
-                {(tutore["rol"].includes("pfg") || tutore["rol"].includes("supertutore")) &&
-                    <Switch style={{position: "relative"}} onChange={changeMood}> </Switch> // {mood}
-                }
-            </Space> 
-            <Row justify="center">
-                <Card style={{alignItems: 'center', maxWidth: 600}} bordered={false}>
-                
-                    {/* <Form
-                    name="basic"
-                    onFinish={onFinish}
-                    form={form}
-                    style={{ marginTop: "10px" }}
-                    > */}
+                    {(tutore["rol"].includes("pfg") || tutore["rol"].includes("supertutore")) &&
+                        <Switch style={{position: "relative"}} onChange={changeMood}> </Switch> // {mood}
+                    }
+                </Space> 
+                <Row justify="center">
+                    <Card style={{alignItems: 'center', maxWidth: 600}} bordered={false}>
+                    
                         <Col xs={24} sm={30} md={36} lg={44} xl={50}>
-                            {/* <Form.Item
-                                name="schedule"
-                                values="schedule"
-                                // dependencies={["contrasena"]}
-                                validateTrigger="onBlur"
-                                rules={[
-                                {
-                                    required: true,
-                                    message: "Por favor pon algun horario",
-                                },
-                                {
-                                    validator: validateFields,
-                                }
-                                ]}
-                            > */}
-                                <ScheduleSelector timeFormat='h' startDate={week}  numDays={weekDays} minTime={1} maxTime={8} 
-                                                selection={schedule.schedule} onChange={handleChange}
-                                                renderDateCell={renderCustomDateCell}  dateFormat='dd DD/MM'
-                                /> 
-                            {/* </Form.Item> */}
-                            {/* <Form.Item
-                                name="nombre"
-                                values="nombre"
-                                // dependencies={["contrasena"]}
-                                validateTrigger="onBlur"
-                                rules={[
-                                {
-                                    required: true,
-                                    message: "Pon tu nombreeee",
-                                },
-                                {
-                                    validator: validateFields,
-                                }
-                                ]}
-                            > */}
-                            <p style={{marginTop:'2%'}}>Tutores en la casilla: {selected}</p>
+                            <ScheduleSelector timeFormat='h' startDate={week}  numDays={weekDays} minTime={1} maxTime={8} 
+                                            selection={schedule.schedule} onChange={handleChange}
+                                            renderDateCell={renderCustomDateCell}  dateFormat='dd DD/MM'
+                            /> 
+                            
+                            <p style={{marginTop:'2%'}}>Tutores en el módulo: {selected}</p>
                             {/* </Form.Item> */}
                             <Space>
                                 <Button
-                                        type="primary"
-                                        
-                                        // htmlType="submit"
-                                        style={{
-                                            textAlign: "center",
-                                            marginTop: "5%",
-                                            borderRadius: "10px",
-                                            fontSize: "15px",
-                                            color: "white"
-                                        }}
-                                        onClick={reloadSchedule}
-                                    >
+                                    type="primary"
+                                    
+                                    // htmlType="submit"
+                                    shape="round"
+                                    style={{
+                                        textAlign: "center",
+                                        marginTop: "5%",
+                                        color: "white"
+                                    }}
+                                    onClick={reloadSchedule}
+                                >
                                         {<ReloadOutlined />}
                                 </Button>
                                 
                                 <Button
-                                        type="primary"
-                                        
-                                        // htmlType="submit"
-                                        style={{
-                                            textAlign: "center",
-                                            marginTop: "5%",
-                                            borderRadius: "10px",
-                                            fontSize: "15px",
-                                            color: "white"
-                                        }}
-                                        onClick={sendSchedule}
-                                    >
+                                    type="primary"
+                                    
+                                    // htmlType="submit"
+                                    shape="round"
+                                    style={{
+                                        textAlign: "center",
+                                        marginTop: "5%",
+                                        color: "white"
+                                    }}
+                                    onClick={sendSchedule}
+                                >
                                         Enviar
                                 </Button>
 
                                 {boton()}
                             </Space>
-
-                            {changeName()}
                             
-                            
-                             </Col>
-                    {/* </Form> */}
-                </Card>
-            </Row>
-            {/*
-            <img src={googleImage}></img>
-            */}
-            
+                        </Col>
+                    </Card>
+                </Row>
+                
+                
 
-
-            <p style={{textAlign: "center", marginTop: "4%"}}>
-            Made with {<HeartFilled />} by PFGang
-            </p>
+                
+            </div>
+            }
+            {/*<Modal title="Cambia tu nombre!" visible={isModalVisible} onOk={handleOk} onCancel={handleCancel}>
+                {changeName()}
+        </Modal>*/}
+            {changeName()}
         </div>
+        <p style={{textAlign: "center", marginTop: "4%"}}>
+            Made with {<HeartFilled />} by PFGang
+        </p>
+        
     </LoadingScreen>
     )
 }

@@ -5,14 +5,17 @@ import logo from '../img/logo.svg'
 
 const { Link } = Anchor;
 
-export default function AppHeader() {
+export default function AppHeader(info) {
+  console.log(info)
   return (
     <div>
       <div className="header">
         <Row align="middle" justify="space-between">
           <img src={logo} style={{ width: 50 }} alt="" />
           <Anchor className="anchor" targetOffset="70">
-            <Link href="#reservar" title="Reservar"/>
+            <Button type="link">
+              <Link href="#reservar" title={info.info}/>
+            </Button>
           </Anchor>
         </Row>
       </div>
