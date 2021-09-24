@@ -1,14 +1,12 @@
 import React, {useState, useEffect} from 'react';
-import { Row, Col, Button, Card, Input, Modal, Space, Anchor } from 'antd';
-import { HeartFilled, ReloadOutlined, MailOutlined, UserOutlined } from '@ant-design/icons';
+import { Row, Col, Button, Card, Input, Modal, Space, Anchor, message } from 'antd';
+import { HeartFilled, ReloadOutlined } from '@ant-design/icons';
 import ScheduleSelector from 'react-schedule-selector';
 import axios from "axios";
-import { Header } from 'antd/lib/layout/layout';
 import { GoogleLogin, GoogleLogout } from 'react-google-login';
 import  LoadingScreen  from 'react-loading-screen';
 import Logo from '../logo.gif';
 import { Switch } from 'antd'
-import AppHeader from './header';
 import logo from '../img/logo.svg'
 
 
@@ -64,9 +62,6 @@ function loadSchedule () {
         }
 
         });
-
-        console.log("oli")
-
     };
 
 loadSchedule();
@@ -96,6 +91,7 @@ export default function HorariosSala() {
                                         "gda": "",
                                         "rol": []
                                         })
+    
     // const [rol, setRol] = useState(false)
     // const [form] = Form.useForm();
     let tiempo_paso = false;
@@ -115,8 +111,12 @@ export default function HorariosSala() {
         horarios = response["data"]['schedule'];
         console.log(horarios);
         valor = new Date(`${response["data"]["start"]} 13:00:00`);
+        
+        if (mood === true) {
+            valor.setDate(valor.getDate() + 7);
+        }
+
         setWeek(valor);
-        console.log(valor, week)
         cupos = response["data"]['cupos'];
         cupos0 = response["data"]['cupos_0'];
         setSchedule({})
@@ -140,7 +140,6 @@ export default function HorariosSala() {
         sleep(2000)
         .then( () => {
                 //setIsLoading(false);
-                console.log("deberia salirse la carga");
                 tiempo_paso = true;
 
         })
@@ -149,12 +148,6 @@ export default function HorariosSala() {
          
 
     };
-    useEffect(() => {
-        if(tiempo_paso === true){
-            //setIsLoading(false);
-            console.log("deberia salirse po");
-        }
-    }, [tiempo_paso]);
 
     const responseGoogle = (response) => {
         setMood(false);
@@ -261,6 +254,10 @@ export default function HorariosSala() {
             colorNotSelected = '#e8ebed'
             colorMouse = '#e8ebed'
             
+            if (tutore["rol"].includes("pfg") || tutore["rol"].includes("supertutore")) {
+                colorSelected = '#657786';
+                colorMouse = '#8ea0ab';
+            }
 
         } else
         if (anotade) {
@@ -275,7 +272,12 @@ export default function HorariosSala() {
             colorMouse = '#F5B7B1'*/
             colorSelected = '#e8ebed'
             colorNotSelected = '#e8ebed'
-            colorMouse = '#e8ebed'
+            colorMouse = '#b5c0c7'
+
+            if (tutore["rol"].includes("pfg") || tutore["rol"].includes("supertutore")) {
+                colorSelected = '#657786';
+                colorMouse = '#8ea0ab';
+            }
 
         } else {
 
@@ -303,10 +305,13 @@ export default function HorariosSala() {
         if (tutore["rol"].includes("pfg") || tutore["rol"].includes("supertutore")) {
             
             if (!mood) {
-                setWeekDays(21) 
+                setWeekDays(5)
+                week.setDate(week.getDate() + 7);
             } else {
                 setWeekDays(5)
+                week.setDate(week.getDate() - 7);
             }
+
             setMood(!mood);
         } else {
             setMood(false);
@@ -315,7 +320,6 @@ export default function HorariosSala() {
     }
 
     const changeName = () => {
-        console.log(tutore["email"])
         let esClase = "";
         if (!tutore["email"]) { 
             return <span style={{width: "100%"}}></span>
@@ -336,14 +340,13 @@ export default function HorariosSala() {
 
     const boton = () => {
         if (tutore["rol"]) {
-            if (mood && (tutore["rol"].includes("pfg") || tutore["rol"].includes("supertutore"))) {
+            if (tutore["rol"].includes("pfg") || tutore["rol"].includes("supertutore")) {
                 return ( <Button type="primary"
-                // size="large"
+                // size="small"
                 // htmlType="submit"
                 shape="round"
                 style={{
                     textAlign: "center",
-                    marginTop: "5%",
                     color: "white"
                 }}
                 onClick={modSchedule}>
@@ -418,10 +421,13 @@ export default function HorariosSala() {
     ) }
 
     const sendSchedule = () => {
-        // const obj = {schedule: schedule, nombre: nombre}
-        // console.log("AAA", schedule)
+
         axios.post(`${api}/horarios/reservar`, {'tutore': tutore, 'schedule': schedule }, {'tutore': tutore, 'schedule': schedule})
         .then( (response) => {
+            if (!response.data.status) {
+                message.warning(response.data.message);
+            }
+            
             reloadSchedule();
         })
     }
@@ -441,7 +447,7 @@ export default function HorariosSala() {
         setIsModalVisible(false);
         console.log("antes real")
         
-        
+
     }
 
     const renderTimeLabel = (time) => {
@@ -460,9 +466,19 @@ export default function HorariosSala() {
                         5: "14:00",
                         6: "15:30",
                         7: "17:00"}
-        return <span>{traductorTime[time.getHours()]}</span>
+        return <span className="timeFont">{traductorTime[time.getHours()]}</span>
     }
 
+    const renderDateLabel = (date) => {
+        let traductor = {   1: "L",
+                        2: "M",
+                        3: "W",
+                        4: "J",
+                        5: "V",
+                        6: "S",
+                        0: "D"}
+        return <span className="dateFont">{traductor[date.getDay()]} {date.getDate()}</span>
+    }
 
     const GoogleSign = () => {
 
@@ -507,7 +523,6 @@ export default function HorariosSala() {
     const handleCancel = () => {
         setIsModalVisible(false);
     };
-    // console.log(horarios)
 
     return (
     
@@ -566,6 +581,7 @@ export default function HorariosSala() {
                                 onChange={handleChange}
                                 renderDateCell={renderCustomDateCell}  
                                 renderTimeLabel={renderTimeLabel}
+                                renderDateLabel={renderDateLabel}
                                 dateFormat='ddd DD'
                             /> 
 
@@ -579,7 +595,6 @@ export default function HorariosSala() {
                                     shape="round"
                                     style={{
                                         textAlign: "center",
-                                        marginTop: "5%",
                                         color: "white"
                                     }}
                                     onClick={reloadSchedule}
@@ -594,7 +609,6 @@ export default function HorariosSala() {
                                     shape="round"
                                     style={{
                                         textAlign: "center",
-                                        marginTop: "5%",
                                         color: "white"
                                     }}
                                     onClick={sendSchedule}
@@ -617,7 +631,9 @@ export default function HorariosSala() {
                                     height: "130px"
                                 }}
                             >
-                                {selected}
+                                <Row align="middle" justify="center" style={{height: '70px'}}>
+                                    {selected}
+                                </Row>
                             </Card>
                         </Col>
                         <br/>
@@ -629,14 +645,9 @@ export default function HorariosSala() {
                     </Card>
                 </Row>
                 
-                
-
-                
             </div>
             }
-            {/*<Modal title="Cambia tu nombre!" visible={isModalVisible} onOk={handleOk} onCancel={handleCancel}>
-                {changeName()}
-        </Modal>*/}
+
             {changeName()}
         </div>
         <p style={{textAlign: "center", marginTop: "4%"}}>
