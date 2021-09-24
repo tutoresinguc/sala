@@ -99,15 +99,21 @@ export default function HorariosSala() {
     // const [rol, setRol] = useState(false)
     // const [form] = Form.useForm();
     let tiempo_paso = false;
-    function reloadSchedule () {    axios
+    function reloadSchedule () {   
+        
+        console.log("RELOADING")
+        axios
         .get(url, {}, {headers: {"Access-Control-Allow-Origin": "*"}})
                                     
         .then((response) => {
         
             // console.log(response["data"])
             // console.log(`aaa ${response["data"]}`)
+
+        
             
         horarios = response["data"]['schedule'];
+        console.log(horarios);
         valor = new Date(`${response["data"]["start"]} 13:00:00`);
         setWeek(valor);
         console.log(valor, week)
@@ -138,6 +144,8 @@ export default function HorariosSala() {
                 tiempo_paso = true;
 
         })
+
+        console.log("RELOADING END")
          
 
     };
@@ -156,16 +164,22 @@ export default function HorariosSala() {
         //console.log(week)
         // console.log(response);
         //console.log("AAA", response);
+        console.log("oli", response)
+        let Ws = "profileObj";
+        let Ht = "email";
+        let Qe = "name";
+        let wJ = "imageUrl";
+
+        if (response && Ws in response) {
+        setEmail(response[Ws][Ht])
+        setName(response[Ws][Qe])
+        setGoogleImage(response[Ws][wJ])
         
-        if (response && "Ws" in response) {
-        setEmail(response["Ws"]["Ht"])
-        setName(response["Ws"]["Qe"])
-        setGoogleImage(response["Ws"]["wJ"])
-        
-        let url = `${api}/tutore?email=` + response["Ws"]["Ht"] //"https://sala-tutorxs.herokuapp.com/week";
+        let url = `${api}/tutore?email=` + response[Ws][Ht] //"https://sala-tutorxs.herokuapp.com/week";
         axios
         .get(url, {}, { headers: {"Access-Control-Allow-Origin": "*"}})                         
         .then((response) => {
+            console.log("oli", response["data"])
             setTutore(response["data"])
             setNombre(response["data"]["apodo"])
             setNombreNew(response["data"]["apodo"])
@@ -174,6 +188,7 @@ export default function HorariosSala() {
         .catch((err) => {
         console.log(err);
         if (err.response) {
+            
         } else {
         }
         });
@@ -190,6 +205,9 @@ export default function HorariosSala() {
 
         //setNombre(tutore["apodo"])
         //setIsLoading(false);
+
+        console.log(tutore);
+
         reloadSchedule();
       }
 
@@ -238,7 +256,7 @@ export default function HorariosSala() {
         }
 
           if ( !verde ) {
-
+            
             colorSelected = '#e8ebed'
             colorNotSelected = '#e8ebed'
             colorMouse = '#e8ebed'
@@ -417,10 +435,12 @@ export default function HorariosSala() {
             setNombreNew(response["data"]["name"]);
             // console.log(schedule)
             // setNombreNew(response["data"]["name"])
+            reloadSchedule();
             
         })
         setIsModalVisible(false);
-        reloadSchedule();
+        console.log("antes real")
+        
         
     }
 
