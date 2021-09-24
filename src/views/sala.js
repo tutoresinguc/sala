@@ -442,6 +442,7 @@ export default function HorariosSala() {
             // console.log(schedule)
             // setNombreNew(response["data"]["name"])
             reloadSchedule();
+
             
         })
         setIsModalVisible(false);
